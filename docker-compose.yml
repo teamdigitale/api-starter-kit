@@ -1,0 +1,7 @@
+indicepa:
+  build: .
+  volumes:
+  - .:/code
+  ports:
+  - "8080:8080"
+
