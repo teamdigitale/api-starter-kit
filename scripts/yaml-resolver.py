@@ -4,10 +4,11 @@
     It expects references are defined in `x-commons` object.
     This object will be removed before serialization.
 """
+from __future__ import print_function
 from sys import argv
-from urllib.parse import urldefrag
 import yaml
-from urllib.request import urlopen
+from six.moves.urllib.parse import urldefrag
+from six.moves.urllib.request import urlopen
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -20,7 +21,6 @@ ROOT_NODE = object()
 
 def traverse(node, key=ROOT_NODE, parents=None, cb=print):
     """ Recursively call nested elements."""
-    # log.info(f"{node} {key} {parents}")
     parents = parents[-4:] if parents else []
     if isinstance(node, (dict, list)):
         valuelist = node.items() if isinstance(node, dict) else enumerate(node)
@@ -32,7 +32,7 @@ def traverse(node, key=ROOT_NODE, parents=None, cb=print):
     else:
         if key == '$ref' and node.startswith("http"):
             ancestor, needle = parents[-3:-1]
-            log.info(f"replacing: {needle} in {ancestor} with ref {node}")
+            #log.info(f"replacing: {needle} in {ancestor} with ref {node}")
             ancestor[needle] = cb(key, node)
             if isinstance(ancestor[needle], (dict, list)):
                 traverse(ancestor[needle], key, parents, cb)
@@ -64,12 +64,8 @@ def test_traverse_list():
 
 def test_traverse_object():
     oas = {'components': {'parameters': {'limit': {'$ref': 'https://teamdigitale.github.io/openapi/parameters/v3.yaml#/limit'},
-                                         'offset': {'$ref': 'https://teamdigitale.github.io/openapi/parameters/v3.yaml#/offset'},
                                          'sort': {'$ref': 'https://teamdigitale.github.io/openapi/parameters/v3.yaml#/sort'}},
-
                           'headers': {'X-RateLimit-Limit': {'$ref': 'https://teamdigitale.github.io/openapi/headers/v3.yaml#/X-RateLimit-Limit'},
-                                      'X-RateLimit-Remaining': {'$ref': 'https://teamdigitale.github.io/openapi/headers/v3.yaml#/X-RateLimit-Remaining'},
-                                      'X-RateLimit-Reset': {'$ref': 'https://teamdigitale.github.io/openapi/headers/v3.yaml#/X-RateLimit-Reset'},
                                       'Retry-After': {'$ref': 'https://teamdigitale.github.io/openapi/headers/v3.yaml#/Retry-After'}},
                           }}
     traverse(oas, cb=resolve_node)
@@ -83,7 +79,7 @@ def test_nested_reference():
 
 
 def get_yaml_reference(f, yaml_cache=None):
-    log.info(f"Downloading {f}")
+    #log.info(f"Downloading {f}")
     host, fragment = urldefrag(f)
     if host not in yaml_cache:
         yaml_cache[host] = urlopen(host).read()
@@ -95,7 +91,7 @@ def get_yaml_reference(f, yaml_cache=None):
 
 
 def finddict(_dict, keys):
-    log.debug(f"search {keys} in {_dict}")
+    #log.debug(f"search {keys} in {_dict}")
     p = _dict
     for k in keys:
         p = p[k]
@@ -103,7 +99,7 @@ def finddict(_dict, keys):
 
 
 def resolve_node(key, node):
-    log.info(f"Resolving {node}")
+    #log.info(f"Resolving {node}")
     _yaml = get_yaml_reference(node, yaml_cache=yaml_cache)
     return _yaml
 

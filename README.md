@@ -12,13 +12,43 @@ Questo repository contiene il template di un progetto utile a pubblicare delle A
 
 Gli step per la creazione di API interoperabili sono:
 
-.1 scrivere le specifiche in formato OpenAPI v3 partendo da `openapi/openapi.yaml`;
-.2 se si utilizzano strumenti per generare il codice a partire dalle specifiche, puo' essere necessario
-   convertirle in formato swagger (OpenAPI v2). Il progetto contiene dei tool di conversione.
+.1 scrivere le specifiche in formato OpenAPI v3 partendo dagli esempi in `openapi`;
+
+.2 scrivere o generare il codice a partire dalle specifiche. Alcuni strumenti per auto-generare il codice utilizzano ancora il formato swagger (openapi v2). Nella directory `scripts` ci sono dei tool di conversione basati su docker.
+
 .3 scrivere i metodi dell'applicazione
 
-## Panoramica
+### Scrivere le specifiche
 
+TBD
+
+### Convertire tra vari formati
+La directory `scripts` contiene dei tool per convertire tra vari formati.
+Prima di convertire le specifiche bisogna verificare che non ci siano
+riferimenti esterni.
+
+        # Generare delle specifiche swagger a partire da openapi.
+        ./scripts/openapi2swagger.sh openapi/simple.yaml > /tmp/swagger.yaml
+
+### Generare il codice del server
+Una volta avute le specifiche, possiamo creare il progetto.
+
+        mkdir prj-simple
+        ./scripts/generate-flask.sh /tmp/swagger.yaml ./prj-simple/
+
+### Prime personalizzazioni
+Per erogare un servizio via https basta sostituire
+
+        # in Dockerfile
+        FROM python:3.6-alpine
+        +RUN apk add --no-cache libffi-dev build-base openssl-dev
+
+        # in swagger_server/__main__.py
+        -app.run(port=8080)
+        +app.run(port=8443, ssl_context='adhoc')
+
+
+## swagger_server/__main__.py
 Un servizio REST con supporto TLS per ricercare le organizzazioni via .ldap. Le credenziali - reperibili sul sito di indicepa.gov.it
 vengono passate tramite basic auth
 
@@ -28,7 +58,7 @@ Il server viene generato tramite [swagger-codegen](https://github.com/swagger-ap
 Questo esempio utilizza la libreria [Connexion](https://github.com/zalando/connexion) library on top of Flask.
 
 ## Requisiti
-Docker o Python 3.6+
+Docker e Python 3.6+
 
 ## Utilizzo
 
