@@ -31,17 +31,20 @@ riferimenti esterni.
         ./scripts/openapi2swagger.sh openapi/simple.yaml > /tmp/swagger.yaml
 
 ### Generare il codice del server
-Una volta avute le specifiche, possiamo creare il progetto.
+Il file `Makefile` contiene un esempio completo di conversione delle specifiche e generazione del server.
+Per convertire e generare il codice in `prj-simple` lanciare:
 
-        mkdir prj-simple
-        ./scripts/generate-flask.sh /tmp/swagger.yaml ./prj-simple/
+        make prj-simple
 
-### Prime personalizzazioni
+
+### Usare HTTPS
 Per erogare un servizio via https basta sostituire
 
         # in Dockerfile
         FROM python:3.6-alpine
         +RUN apk add --no-cache libffi-dev build-base openssl-dev
+        -EXPOSE 8080
+        +EXPOSE 8443
 
         # in swagger_server/__main__.py
         -app.run(port=8080)

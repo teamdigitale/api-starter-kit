@@ -9,9 +9,12 @@ usage(){
 }
 : {1?Missing infile}
 : {2?Missing outdir}
+
+IMG=swaggerapi/swagger-codegen-cli
+
 docker run --rm \
 	-v $(readlink -f "$1"):/swagger.yaml:z \
-	-v $(readlink -f "$2"):/outdir:z swaggerapi/swagger-codegen-cli \
+	-v $(readlink -f "$2"):/outdir:z $IMG \
 	generate -l python-flask -o /outdir -i /swagger.yaml
 
 
