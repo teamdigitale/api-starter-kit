@@ -1,3 +1,16 @@
+#
+# Docker setups to test and develop this application.
+#
+# Build and run all tests via docker-compose up test
+test:
+  build: .
+  volumes:
+  - .:/code:z
+  working_dir: /code
+  entrypoint: /bin/sh
+  command: -c 'pip install tox && tox'
+
+
 simple:
   build: .
   volumes:
@@ -5,4 +18,3 @@ simple:
   ports:
   - "8080:8080"
   - "8443:8443"
-

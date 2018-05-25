@@ -1,17 +1,21 @@
+.travis.yaml
+.swagger-codegen-ignore
+docker-compose.yml
+README.md
+tox.ini
+git_push.sh
+test-requirements.txt
+setup.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-
-# Temporary files
-*~
-
 # C extensions
 *.so
 
 # Distribution / packaging
-.swagger-codegen
 .Python
 env/
 build/

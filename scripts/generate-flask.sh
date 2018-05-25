@@ -13,6 +13,7 @@ usage(){
 IMG=swaggerapi/swagger-codegen-cli
 
 docker run --rm \
+	--user=$UID:$GID \
 	-v $(readlink -f "$1"):/swagger.yaml:z \
 	-v $(readlink -f "$2"):/outdir:z $IMG \
 	generate -l python-flask -o /outdir -i /swagger.yaml

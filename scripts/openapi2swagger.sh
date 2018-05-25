@@ -17,6 +17,7 @@ build(){
 }
 
 docker run --rm \
+	--user=$UID:$GID \
 	-v $(dirname $FROM):/tmp:z \
 	--entrypoint /usr/local/bin/api-spec-converter \
  	ioggstream/api-spec-converter \

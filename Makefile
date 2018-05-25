@@ -18,13 +18,24 @@ yamllint: $(YAML)
 
 # Create a simple project starting from OpenAPI v3 spec
 #  in simple.yaml.
-prj-simple: openapi/simple.yaml
+prj-simple-generate: openapi/simple.yaml
 	# Convert OpenAPI v3 to a temporary Swagger 2.0 using
 	#  docker image ioggstream/api-spec-converter
 	./scripts/openapi2swagger.sh openapi/simple.yaml > /tmp/swagger.yaml
 
 	# Generate a flask client from v2 spec using
-	#  docker image ioggstream/
+	#  docker image swaggerapi/swagger-codegen-cli
 	./scripts/generate-flask.sh /tmp/swagger.yaml  ./prj-simple/
-	(cd prj-simple && docker-compose up --build)
+
+prj-simple: prj-simple-generate
+	(cd prj-simple && docker-compose up --build test )
+
+
+prj-simple-quickstart: prj-simple-generate
+	# Revert files changed by the codegen.
+	(cd prj-simple && git checkout -- . )
+	# Test all
+	(cd prj-simple && docker-compose up --build test )
+	# Build and run the application
+	(cd prj-simple && docker-compose up simple )
 
