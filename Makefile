@@ -31,11 +31,8 @@ prj-simple: prj-simple-generate
 	(cd prj-simple && docker-compose up --build test )
 
 
-prj-simple-quickstart: prj-simple-generate
-	# Revert files changed by the codegen.
-	(cd prj-simple && git checkout -- . )
-	# Test all
-	(cd prj-simple && docker-compose up --build test )
-	# Build and run the application
-	(cd prj-simple && docker-compose up simple )
+prj-full-generate: openapi/openapi.yaml.src
+	./scripts/yaml-resolver.sh openapi/openapi.yaml.src /dev/fd/1  > /tmp/openapi-resolved.yaml
+	./scripts/openapi2swagger.sh /tmp/openapi-resolved.yaml > /tmp/swagger.yaml
+	./scripts/generate-flask.sh /tmp/swagger.yaml  ./prj-full/
 

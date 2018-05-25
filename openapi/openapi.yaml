@@ -1,4 +1,8 @@
 components:
+  securitySchemes:
+    ldapCredentials:
+      scheme: basic
+      type: http
   headers:
     Retry-After:
       description: |-
@@ -440,7 +444,7 @@ paths:
         default:
           $ref: '#/components/responses/default'
       security:
-      - ldapCredentials
+      - ldapCredentials: []
       summary: Ricerca una PA per nome.
       tags:
       - public
@@ -481,14 +485,10 @@ paths:
         default:
           $ref: '#/components/responses/default'
       security:
-      - ldapCredentials
+      - ldapCredentials: []
       summary: Recupera le informazioni su una PA.
       tags:
       - public
-securitySchemes:
-  ldapCredentials:
-    scheme: basic
-    type: http
 servers:
 - description: Test server
   url: https://api.example.com/ipa/v1

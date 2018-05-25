@@ -27,7 +27,7 @@ info:
     ```
     http http://localhost:8443/datetime/v1/echo
     {
-      'datetime': '2018-12-30T12:23:32Z'
+      'timestamp': '2018-12-30T12:23:32Z'
     }
     ```
   license:

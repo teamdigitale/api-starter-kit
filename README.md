@@ -5,7 +5,7 @@ Questo repository contiene il template di un progetto utile a pubblicare delle A
 
 ## Contenuto
 
-- Un progetto di esempio in python
+- Due progetti di esempio: uno in python e uno in XXX.
 - Una directory `openapi` dove scrivere le specifiche, che include script e suggerimenti
 
 ## Istruzioni
@@ -18,37 +18,40 @@ Gli step per la creazione di API interoperabili sono:
 
 .3 scrivere i metodi dell'applicazione
 
+E' possibile subito generare il codice ed eseguire `prj-simple` lanciando:
+
+        make prj-simple-quickstart
+
 ### Scrivere le specifiche
 
 TBD
 
 ### Convertire tra vari formati
-La directory `scripts` contiene dei tool per convertire tra vari formati.
-Prima di convertire le specifiche bisogna verificare che non ci siano
-riferimenti esterni.
+Ad oggi, la maggioranza dei tool di generazione delle specifiche è basata ancora su Swagger 2.0.
+La directory `scripts` contiene uno script per convertire da OpenAPI a Swagger:
 
         # Generare delle specifiche swagger a partire da openapi.
         ./scripts/openapi2swagger.sh openapi/simple.yaml > /tmp/swagger.yaml
 
+**NB: le specifiche Swagger convertite vanno utilizzate solo per generare il codice,
+ in attesa di un rilascio piu' capillare dei nuovi tool**
+
 ### Generare il codice del server
-Il file `Makefile` contiene un esempio completo di conversione delle specifiche e generazione del server.
-Per convertire e generare il codice in `prj-simple` lanciare:
+`prj-simple` contiene dei file che implementano il servizio, e che sostituiscono i template autogenerati.
+
+Rigenerando il codice con:
 
         make prj-simple
 
+possiamo vedere le modifiche tra i file che implementano il servizio ed i template
 
-### Usare HTTPS
-Per erogare un servizio via https basta sostituire
+        git diff prj-simple
 
-        # in Dockerfile
-        FROM python:3.6-alpine
-        +RUN apk add --no-cache libffi-dev build-base openssl-dev
-        -EXPOSE 8080
-        +EXPOSE 8443
+Le modifiche sono descritte dai relativi commenti e:
 
-        # in swagger_server/__main__.py
-        -app.run(port=8080)
-        +app.run(port=8443, ssl_context='adhoc')
+  - Erogano il servizio via HTTPS e modificano di conseguenza il Dockerfile
+  - Correggono un bug del framework nei test
+  - Implementano il servizio
 
 
 ## swagger_server/__main__.py
@@ -63,26 +66,18 @@ Questo esempio utilizza la libreria [Connexion](https://github.com/zalando/conne
 ## Requisiti
 Docker e Python 3.6+
 
-## Utilizzo
 
-Per eseguire il servizio è necessario utilizzare docker. Il seguente comando compila ed esegue l'applicazione:
+## prj-simple
 
-```bash
-# starting up a container
-docker-compose up
-```
+Per eseguire prj-simple:
 
-che viene servita all'indirizzo:
+        make prj-simple-quickstart
 
-```
-https://localhost:8443/api-starter-kit/1.0.0/
-```
+Una volta avviato il servizio:
 
-I test vengono eseguiti via tox:
-```
-sudo pip install tox
-tox
-```
+        curl -k https://172.17.0.2:8443/datetime/v1/echo
+        {
+        "timestamp": "2018-05-25T17:49:49.847141Z"
+        }
 
-## Running with Docker
 
