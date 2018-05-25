@@ -132,7 +132,13 @@ def main(src_file, dst_file):
 
     with open(src_file) as fh_src, open(dst_file, 'w') as fh_dst:
         ret = yaml.load(fh_src)
+
+        # Resolve nodes.
+        # TODO: this behavior could be customized eg.
+        #  to strip some kind of nodes.
         traverse(ret, cb=resolve_node)
+
+        # Strip response headers
         # Remove x-commons containing references and aliases.
         if 'x-commons' in ret:
             del ret['x-commons']
