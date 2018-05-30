@@ -6,8 +6,9 @@
 """
 from __future__ import print_function
 from sys import argv
+import os
 import yaml
-from six.moves.urllib.parse import urldefrag
+from six.moves.urllib.parse import urldefrag, urlparse
 from six.moves.urllib.request import urlopen
 import logging
 
@@ -19,24 +20,91 @@ yaml_cache = {}
 ROOT_NODE = object()
 
 
-def traverse(node, key=ROOT_NODE, parents=None, cb=print):
-    """ Recursively call nested elements."""
+def is_http_ref(key, node):
+    if key=='$ref':
+        if node.startswith('http'):
+            return True
+        if node.endswith(('.yaml', '.yml')):
+            return True
+
+
+def is_self_ref(key, node):
+    if key=='$ref':
+        if node.startswith('#/'):
+            return True
+
+
+def traverse(node, key=ROOT_NODE, parents=None, cb=print, is_leaf=None):
+    """ Recursively call nested elements.
+
+        param: node      -   the structure to traverse, list or dict
+        param: key       -   the key of the current items
+        param: parents   -   a breadcrumb of the hierarchy
+        param: cb        -   a callback
+        param: is_leaf
+    """
+    is_leaf = is_leaf or is_http_ref
     parents = parents[-4:] if parents else []
+    # On a subtree
     if isinstance(node, (dict, list)):
         valuelist = node.items() if isinstance(node, dict) else enumerate(node)
         if key is not ROOT_NODE:
             parents.append(key)
         parents.append(node)
         for k, i in valuelist:
-            traverse(i, k, parents, cb)
-    else:
-        if key == '$ref' and node.startswith("http"):
-            ancestor, needle = parents[-3:-1]
-            #log.info(f"replacing: {needle} in {ancestor} with ref {node}")
-            ancestor[needle] = cb(key, node)
-            if isinstance(ancestor[needle], (dict, list)):
-                traverse(ancestor[needle], key, parents, cb)
+            traverse(i, k, parents, cb, is_leaf=is_leaf)
+        return
 
+    # On a leaf
+    if is_leaf(key, node):
+        ancestor, needle = parents[-3:-1]
+        cb(key, node, ancestor, needle)
+        if isinstance(ancestor[needle], (dict, list)):
+            traverse(ancestor[needle], key, parents, cb, is_leaf=is_leaf)
+
+
+def get_yaml_reference(f, yaml_cache=None):
+    #log.info(f"Downloading {f}")
+    host, fragment = urldefrag(f)
+    f_url = urlparse(f)
+    if host not in yaml_cache:
+        if not f_url.scheme:
+            host = 'file:///' + os.path.normpath(os.path.abspath(host))
+        yaml_cache[host] = urlopen(host).read()
+
+    f_yaml = yaml.load(yaml_cache[host])
+    if fragment.strip("/"):
+        f_yaml = finddict(f_yaml, fragment.strip("/").split("/"))
+    return f_yaml
+
+
+def finddict(_dict, keys):
+    #log.debug(f"search {keys} in {_dict}")
+    p = _dict
+    for k in keys:
+        p = p[k]
+    return p
+
+
+def resolve_node(key, node, ancestor=None, needle=None):
+    log.info(f"Resolving {key} {needle}")
+    _yaml = get_yaml_reference(node, yaml_cache=yaml_cache)
+    def prepend_needle(key, node, ancestor, needle):
+        ancestor[needle] = node.replace('#/', f'#/{needle}/')
+    traverse(_yaml, cb=prepend_needle, is_leaf=is_self_ref)
+    ancestor[needle] = _yaml
+
+
+def test_prepend_needle():
+    oat = {
+        'a': 1,
+        'definitions': {
+            'Foo': 'bar',
+            'Baz': '#/definitions/Foo'
+            }
+        }
+    traverse(oat, cb=resolve_node, is_leaf=is_self_ref)
+    print(oat)
 
 def test_traverse():
     oat = {
@@ -78,32 +146,6 @@ def test_nested_reference():
     print(yaml.dump(oat, default_flow_style=0))
 
 
-def get_yaml_reference(f, yaml_cache=None):
-    #log.info(f"Downloading {f}")
-    host, fragment = urldefrag(f)
-    if host not in yaml_cache:
-        yaml_cache[host] = urlopen(host).read()
-
-    f_yaml = yaml.load(yaml_cache[host])
-    if fragment.strip("/"):
-        f_yaml = finddict(f_yaml, fragment.strip("/").split("/"))
-    return f_yaml
-
-
-def finddict(_dict, keys):
-    #log.debug(f"search {keys} in {_dict}")
-    p = _dict
-    for k in keys:
-        p = p[k]
-    return p
-
-
-def resolve_node(key, node):
-    #log.info(f"Resolving {node}")
-    _yaml = get_yaml_reference(node, yaml_cache=yaml_cache)
-    return _yaml
-
-
 def should_use_block(value):
     for c in u"\u000a\u000d\u001c\u001d\u001e\u0085\u2028\u2029":
         if c in value:
@@ -131,6 +173,7 @@ def main(src_file, dst_file):
     yaml.representer.BaseRepresenter.represent_scalar = my_represent_scalar
 
     with open(src_file) as fh_src, open(dst_file, 'w') as fh_dst:
+        os.chdir(os.path.dirname(os.path.abspath(src_file)))
         ret = yaml.load(fh_src)
 
         # Resolve nodes.
