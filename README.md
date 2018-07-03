@@ -52,10 +52,7 @@ Per erogare un servizio via https basta sostituire
 
 
 ## swagger_server/__main__.py
-Un servizio REST con supporto TLS per ricercare le organizzazioni via .ldap. Le credenziali - reperibili sul sito di indicepa.gov.it
-vengono passate tramite basic auth
-
-        Authorization: basic XXXX
+Un servizio REST con supporto TLS. 
 
 Il server viene generato tramite [swagger-codegen](https://github.com/swagger-api/swagger-codegen).
 Questo esempio utilizza la libreria [Connexion](https://github.com/zalando/connexion) library on top of Flask.
@@ -84,5 +81,4 @@ sudo pip install tox
 tox
 ```
 
-## Running with Docker
 
