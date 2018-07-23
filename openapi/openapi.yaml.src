@@ -12,10 +12,9 @@ info:
   # Dev'essere chiaro e conciso.
   title: |-
     Starter Kit API
-  description: |
+  x-summary: >-
     Questa prima linea verrà usata come sottotitolo. Descrive brevemente e in linguaggio comune il servizio.
-    \
-    \
+  description: |
     #### Documentazione
     Qui devi inserire la documentazione principale del servizio. Usa due "\" per separare il sottotitolo dalla documentazione.
     Il testo dev'essere diviso in piu' parti, tutte scritte in Markdown.
