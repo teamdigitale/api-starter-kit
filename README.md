@@ -36,6 +36,8 @@ Per convertire e generare il codice in `prj-simple` lanciare:
 
         make prj-simple
 
+Il generatore non sovrascrive i file contenuti in `.swagger-codegen-ignore`.
+
 
 ### Usare HTTPS
 Per erogare un servizio via https basta sostituire
@@ -52,10 +54,7 @@ Per erogare un servizio via https basta sostituire
 
 
 ## swagger_server/__main__.py
-Un servizio REST con supporto TLS per ricercare le organizzazioni via .ldap. Le credenziali - reperibili sul sito di indicepa.gov.it
-vengono passate tramite basic auth
-
-        Authorization: basic XXXX
+Un servizio REST con supporto TLS. 
 
 Il server viene generato tramite [swagger-codegen](https://github.com/swagger-api/swagger-codegen).
 Questo esempio utilizza la libreria [Connexion](https://github.com/zalando/connexion) library on top of Flask.
@@ -75,7 +74,7 @@ docker-compose up
 che viene servita all'indirizzo:
 
 ```
-https://localhost:8443/api-starter-kit/1.0.0/
+https://localhost:8443/$APP_NAME/v1/
 ```
 
 I test vengono eseguiti via tox:
@@ -84,5 +83,4 @@ sudo pip install tox
 tox
 ```
 
-## Running with Docker
 
