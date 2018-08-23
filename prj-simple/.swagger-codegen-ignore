@@ -10,6 +10,7 @@ tox.ini
 .gitignore
 .dockerignore
 *requirements.txt
+README.md
 
 # Application files
 swagger_server/__main__.py

@@ -32,8 +32,6 @@ prj-simple: prj-simple-generate
 
 
 prj-simple-quickstart: prj-simple-generate
-	# Revert files changed by the codegen.
-	(cd prj-simple && git checkout -- . )
 	# Test all
 	(cd prj-simple && docker-compose up --build test )
 	# Build and run the application

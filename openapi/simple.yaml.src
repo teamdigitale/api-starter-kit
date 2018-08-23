@@ -4,6 +4,17 @@
 # Stai per sviluppare un API? Segui attentamente questo template e
 #   potrai integrarla facilmente in Developers Italia.
 #
+x-commons:
+  common-responses: &common-responses
+    '400':
+      $ref: '#/components/responses/400BadRequest'
+    '429':
+      $ref: '#/components/responses/429TooManyRequests'
+    '503':
+      $ref: '#/components/responses/503ServiceUnavailable'
+    default:
+      $ref: '#/components/responses/default'
+
 openapi: 3.0.0
 info:
   version: "1.0.0"
@@ -90,6 +101,7 @@ paths:
       tags:
         - public
       responses:
+        <<: *common-responses
         '200':
           description: |
             Il server ha ritornato il timestamp.
@@ -106,12 +118,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Timestamps'
-        '429':
-          $ref: '#/components/responses/429TooManyRequests'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-        default:
-          $ref: '#/components/responses/default'
+  /status:
+    get:
+      summary: Ritorna lo stato dell'applicazione.
+      description: |
+        Ritorna lo stato dell'applicazione. A scopo
+        di test, su base randomica puo' ritornare
+        un errore.
+      operationId: get_status
+      tags:
+        - public
+      responses:
+        <<: *common-responses
+        '200':
+          description: |
+            Il server ha ritornato lo status. In caso di problemi
+            ritorna sempre un problem+json.
+          # Questi header di throttling sono obbligatori e definiti
+          #   nel Nuovo modello di interoperabilità.
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Timestamps'
 
 components:
 
@@ -140,7 +175,7 @@ components:
 
   schemas:
     Problem:
-      $ref: 'https://teamdigitale.github.io/openapi/schemas/problem.yaml#Problem'
+      $ref: 'https://teamdigitale.github.io/openapi/schemas/problem.yaml#/Problem'
     Timestamps:
       type: object
       description: Un Timestamp in RFC5424

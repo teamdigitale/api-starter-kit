@@ -10,13 +10,26 @@ import yaml
 from six.moves.urllib.parse import urldefrag
 from six.moves.urllib.request import urlopen
 import logging
+from collections import defaultdict
+from os.path import join
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
+# Global variables used by the parser.
 yaml_cache = {}
+yaml_components = defaultdict(dict)
 
 ROOT_NODE = object()
+COMPONENTS_MAP = {
+    "schema": "schemas",
+    "headers": "headers",
+    "parameters": "parameters"
+}
+
+
+def deepcopy(item):
+    return yaml.load(yaml.dump(item))
 
 
 def traverse(node, key=ROOT_NODE, parents=None, cb=print):
@@ -29,13 +42,28 @@ def traverse(node, key=ROOT_NODE, parents=None, cb=print):
         parents.append(node)
         for k, i in valuelist:
             traverse(i, k, parents, cb)
-    else:
-        if key == '$ref' and node.startswith("http"):
-            ancestor, needle = parents[-3:-1]
-            #log.info(f"replacing: {needle} in {ancestor} with ref {node}")
-            ancestor[needle] = cb(key, node)
-            if isinstance(ancestor[needle], (dict, list)):
-                traverse(ancestor[needle], key, parents, cb)
+        return
+    # Resolve HTTP references adding fragments
+    # to 'schema', 'headers' or 'parameters'
+    if key == '$ref' and node.startswith("http"):
+        ancestor, needle = parents[-3:-1]
+        # log.info(f"replacing: {needle} in {ancestor} with ref {node}")
+        ancestor[needle] = cb(key, node)
+
+        if needle in ('schema', 'headers', 'parameters'):
+            host, fragment = urldefrag(node)
+            fragment = fragment.strip("/")
+            needle_alias = COMPONENTS_MAP[needle]
+            yaml_components[needle_alias][fragment] = ancestor[needle]
+        if isinstance(ancestor[needle], (dict, list)):
+            traverse(ancestor[needle], key, parents, cb)
+        if needle in ('schema', 'headers', 'parameters'):
+            # Now the node is fully resolved. I can replace it with the
+            # Deepcopy
+            yaml_components[needle_alias][
+                fragment] = deepcopy(ancestor[needle])
+            ancestor[needle] = {"$ref": "#" +
+                                join("/components", needle_alias, fragment)}
 
 
 def test_traverse():
@@ -73,13 +101,16 @@ def test_traverse_object():
 
 
 def test_nested_reference():
-    oat = {'400BadRequest': {'$ref': 'https://teamdigitale.github.io/openapi/responses/v3.yaml#/400BadRequest'}}
+    oat = {'400BadRequest': {
+        '$ref': 'https://teamdigitale.github.io/openapi/responses/v3.yaml#/400BadRequest'}}
     traverse(oat, cb=resolve_node)
+    assert 'schemas' in yaml_components
+    assert 'Problem' in yaml_components['schemas']
     print(yaml.dump(oat, default_flow_style=0))
 
 
 def get_yaml_reference(f, yaml_cache=None):
-    #log.info(f"Downloading {f}")
+    # log.info(f"Downloading {f}")
     host, fragment = urldefrag(f)
     if host not in yaml_cache:
         yaml_cache[host] = urlopen(host).read()
@@ -91,7 +122,7 @@ def get_yaml_reference(f, yaml_cache=None):
 
 
 def finddict(_dict, keys):
-    #log.debug(f"search {keys} in {_dict}")
+    # log.debug(f"search {keys} in {_dict}")
     p = _dict
     for k in keys:
         p = p[k]
@@ -99,7 +130,7 @@ def finddict(_dict, keys):
 
 
 def resolve_node(key, node):
-    #log.info(f"Resolving {node}")
+    # log.info(f"Resolving {node}")
     _yaml = get_yaml_reference(node, yaml_cache=yaml_cache)
     return _yaml
 
@@ -138,13 +169,23 @@ def main(src_file, dst_file):
         #  to strip some kind of nodes.
         traverse(ret, cb=resolve_node)
 
-        # Strip response headers
         # Remove x-commons containing references and aliases.
         if 'x-commons' in ret:
             del ret['x-commons']
 
-        content = yaml.dump(ret, default_flow_style=False, allow_unicode=True)
-        fh_dst.write(content)
+        # Order yaml keys for a nice
+        # dumping.
+        yaml_keys = set(ret.keys())
+        first_keys = [x for x in (
+            'openapi', 'info',  'servers', 'tags', 'paths', 'components') if x in yaml_keys]
+        remaining_keys = list(yaml_keys - set(first_keys))
+        sorted_keys = first_keys + remaining_keys
+
+        for k in sorted_keys:
+            content = yaml.dump(
+                {k: ret[k]}, default_flow_style=False, allow_unicode=True)
+            fh_dst.write(content)
+
 
 if __name__ == '__main__':
     try:
