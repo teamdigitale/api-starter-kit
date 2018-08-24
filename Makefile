@@ -8,7 +8,7 @@ yaml: $(YAMLGEN)
 %.yaml: %.yaml.src
 	. .tox/py36/bin/activate
 	yamllint $<
-	python ./scripts/yaml-resolver.py $< $@
+	python ./scripts/openapi_resolver.py $< $@
 
 
 
