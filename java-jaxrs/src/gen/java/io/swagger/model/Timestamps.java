@@ -87,7 +87,7 @@ public class Timestamps   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Timestamps {\n");
     
-    sb.append("    timestampa: ").append(toIndentedString(timestamp)).append("\n");
+    sb.append("    timestamp: ").append(toIndentedString(timestamp)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -100,7 +100,7 @@ public class Timestamps   {
     if (o == null) {
       return "null";
     }
-    return new DateTime().toString().replace("\n", "\n    ");
+    return o.toString().replace("\n", "\n    ");
   }
 }
 
