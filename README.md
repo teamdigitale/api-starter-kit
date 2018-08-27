@@ -31,16 +31,25 @@ riferimenti esterni.
         ./scripts/openapi2swagger.sh openapi/simple.yaml > /tmp/swagger.yaml
 
 ### Generare il codice del server
-Il file `Makefile` contiene un esempio completo di conversione delle specifiche e generazione del server.
-Per convertire e generare il codice in `prj-simple` lanciare:
+Il file `Makefile` contiene:
 
-        make prj-simple
+  - un esempio di code generation java direttamente via openapi v3. Basta 
+    lanciare:
+
+        make java-jaxrs
+
+  - un esempio completo di conversione delle specifiche a v2 e generazione del server in python.
+    Per convertire e generare il codice in `python-flask` lanciare:
+
+        make python-flask
 
 Il generatore non sovrascrive i file contenuti in `.swagger-codegen-ignore`.
 
 
+## Python
+
 ### Usare HTTPS
-Per erogare un servizio via https basta sostituire
+Per erogare un servizio python via https basta sostituire
 
         # in Dockerfile
         FROM python:3.6-alpine
@@ -53,6 +62,7 @@ Per erogare un servizio via https basta sostituire
         +app.run(port=8443, ssl_context='adhoc')
 
 
+
 ## swagger_server/__main__.py
 Un servizio REST con supporto TLS. 
 
@@ -62,25 +72,6 @@ Questo esempio utilizza la libreria [Connexion](https://github.com/zalando/conne
 ## Requisiti
 Docker e Python 3.6+
 
-## Utilizzo
+Testare e scaricare le dipendenze con:
 
-Per eseguire il servizio è necessario utilizzare docker. Il seguente comando compila ed esegue l'applicazione:
-
-```bash
-# starting up a container
-docker-compose up
-```
-
-che viene servita all'indirizzo:
-
-```
-https://localhost:8443/$APP_NAME/v1/
-```
-
-I test vengono eseguiti via tox:
-```
-sudo pip install tox
-tox
-```
-
-
+        tox 
