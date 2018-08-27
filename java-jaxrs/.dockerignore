@@ -1,0 +1,8 @@
+build
+target
+out
+.idea
+.classpath
+.dockerignore
+.gitignore
+Dockerfile
