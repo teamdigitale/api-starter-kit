@@ -1,0 +1,36 @@
+{
+    "security": {
+        "nameIdEncrypted": true,
+        "authnRequestsSigned": true,
+        "logoutRequestSigned": false,
+        "logoutResponseSigned": false,
+        "signMetadata": false,
+        "wantMessagesSigned": false,
+        "wantAssertionsSigned": false,
+        "wantNameId" : true,
+        "wantNameIdEncrypted": false,
+        "wantAssertionsEncrypted": false,
+        "signatureAlgorithm": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+        "digestAlgorithm": "http://www.w3.org/2000/09/xmldsig#sha256",
+        "requestedAuthnContext": [
+            "https://www.spid.gov.it/SpidL2"
+        ]
+    },
+    "contactPerson": {
+        "technical": {
+            "givenName": "technical_name",
+            "emailAddress": "technical@example.com"
+        },
+        "support": {
+            "givenName": "support_name",
+            "emailAddress": "support@example.com"
+        }
+    },
+    "organization": {
+        "en-US": {
+            "name": "sp_test",
+            "displayname": "foo",
+            "url": "http://172.17.0.3"
+        }
+    }
+}
