@@ -15,6 +15,9 @@ from onelogin.saml2.utils import OneLogin_Saml2_Utils
 logging.basicConfig(level=logging.DEBUG)
 root = logging.getLogger()
 
+import connexion
+
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'onelogindemopytoolkit'
@@ -93,38 +96,38 @@ class SpidAuthnRequest(object):
                     spid_level="https://www.spid.gov.it/SpidL2")
             else:
                 attrlist = '\n'.join([
-                                     '<saml:AuthnContextClassRef>{authn_context}</saml:AuthnContextClassRef>'.format(
-                                         authn_context=authn_context
-                                     )
-                                     for authn_context
+                    '<saml:AuthnContextClassRef>{authn_context}</saml:AuthnContextClassRef>'.format(
+                        authn_context=authn_context
+                    )
+                    for authn_context
                     in security['requestedAuthnContext']
-
                 ])
-                requested_authn_context_str = '<samlp:RequestedAuthnContext Comparison="{authn_comparison}">' \
-                                              '{attrlist}' \
-                                              '</samlp:RequestedAuthnContext>'.format(
+                requested_authn_context_str = (
+                    '<samlp:RequestedAuthnContext Comparison="{authn_comparison}">'
+                    '{attrlist}'
+                    '</samlp:RequestedAuthnContext>').format(
                     authn_comparison=authn_comparison, attrlist=attrlist
                 )
-
 
         attr_consuming_service_str = 'AttributeConsumingServiceIndex="1"' if sp_data.get(
             'attributeConsumingService') else ""
 
-        request = """<samlp:AuthnRequest
-    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
-    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-    ID="%(id)s"
-    Version="2.0"%(provider_name)s%(force_authn_str)s%(is_passive_str)s
-    IssueInstant="%(issue_instant)s"
-    Destination="%(destination)s"
-    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-    AssertionConsumerServiceURL="%(assertion_url)s"
-    %(attr_consuming_service_str)s>
-    <saml:Issuer 
-        Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
-        NameQualifier="%(entity_id)s"
-        >%(entity_id)s</saml:Issuer>%(nameid_policy_str)s%(requested_authn_context_str)s
-</samlp:AuthnRequest>""" % \
+        request = (
+            """<samlp:AuthnRequest
+            xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+            xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+            ID="%(id)s"
+            Version="2.0"%(provider_name)s%(force_authn_str)s%(is_passive_str)s
+            IssueInstant="%(issue_instant)s"
+            Destination="%(destination)s"
+            ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            AssertionConsumerServiceURL="%(assertion_url)s"
+            %(attr_consuming_service_str)s>"""
+            """<saml:Issuer 
+                Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
+                NameQualifier="%(entity_id)s"
+                >%(entity_id)s</saml:Issuer>%(nameid_policy_str)s%(requested_authn_context_str)s
+            </samlp:AuthnRequest>""") % \
             {
                 'id': uid,
                 'provider_name': provider_name_str,
@@ -137,7 +140,7 @@ class SpidAuthnRequest(object):
                 'nameid_policy_str': nameid_policy_str,
                 'requested_authn_context_str': requested_authn_context_str,
                 'attr_consuming_service_str': attr_consuming_service_str
-            }
+        }
         self.__authn_request = request
 
     def get_request(self, deflate=True):
