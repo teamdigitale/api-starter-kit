@@ -41,9 +41,9 @@
   {% else %}
     <div class="alert alert-danger" role="alert">You don't have any attributes</div>
   {% endif %}
-  <a href="?slo" class="btn btn-danger">Logout</a>
+  <a href="saml?slo" class="btn btn-danger">Logout</a>
 {% else %}
-  <a href="?sso" class="btn btn-primary">Login</a> <a href="?sso2" class="btn btn-info">Login and access to attrs page</a>
+  <a href="saml?sso" class="btn btn-primary">Login</a> <a href="saml?sso2" class="btn btn-info">Login and access to attrs page</a>
 {% endif %}
 
 {% endblock %}
