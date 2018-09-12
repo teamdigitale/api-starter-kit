@@ -1,6 +1,7 @@
 import connexion
-from connexion.resolver import Resolver
 from connexion import problem
+from connexion.resolver import Resolver
+
 
 class PonyResolver(Resolver):
 

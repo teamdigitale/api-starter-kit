@@ -10,7 +10,7 @@ from six.moves.urllib.parse import urlparse
 
 from connexion import problem
 from flask import current_app as app
-from flask import redirect, render_template, request, session, make_response
+from flask import make_response, redirect, render_template, request, session
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
