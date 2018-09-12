@@ -6,7 +6,10 @@ RUN apt-get -y update && apt-get install -y \
 	build-essential libxmlsec1 
 
 RUN mkdir /app
-ADD . /app
 WORKDIR /app
+# Add requirements.txt before rest of repo for caching
+ADD requirements.txt /app
 RUN pip install -rrequirements.txt
+
+ADD . /app/
 ENTRYPOINT ["python", "index.py"]

@@ -2,7 +2,7 @@ import logging
 import socket
 from base64 import b64encode
 from os.path import join as pjoin
-from urlparse import urlparse
+from six.moves.urllib.parse import urlparse
 
 from flask import current_app as app
 from flask import redirect, render_template, request, session
@@ -317,14 +317,14 @@ def get_saml(sso=None, sso2=None, slo=None):
     paint_logout = False
 
     # Redirect requests to IdP
-    if 'sso' in request.args:
+    if sso is '':
         return redirect(auth.login())
 
-    if 'sso2' in request.args:
+    if sso2 is '':
         return_to = '%sattrs/' % request.host_url
         return redirect(auth.login(return_to))
 
-    if 'slo' in request.args:
+    if slo is '':
         name_id = session.get('samlNameId')
         session_index = session.get('samlSessionIndex')
         return redirect(auth.logout(name_id=name_id, session_index=session_index))
@@ -352,9 +352,9 @@ def post_saml(acs=None, sls=None):
     success_slo = False
     attributes = False
     paint_logout = False
-
+    app.logger.warning("acs: %r %r", acs, sls )
     # Inbound replies
-    if 'acs' in request.args:
+    if acs is '':
         auth.process_response()
         errors = auth.get_errors()
         not_auth_warn = not auth.is_authenticated()
@@ -368,7 +368,7 @@ def post_saml(acs=None, sls=None):
             return problem(status=200, title="Login ok")
         return problem(status=401, title="Cannot Login", detail=errors)
 
-    elif 'sls' in request.args:
+    elif sls is '':
         def dscb(): return session.clear()
         url = auth.process_slo(delete_session_cb=dscb)
         errors = auth.get_errors()
@@ -388,7 +388,23 @@ def post_saml(acs=None, sls=None):
     )
 
 
-#
-# Courtesy page.
-#
-index = get_saml
+def get_config():
+    req = prepare_flask_request(request)
+    auth = init_saml_auth(req, app.config)
+    return auth.get_settings().get_idp_data()
+
+
+def get_metadata():
+    req = prepare_flask_request(request)
+    auth = init_saml_auth(req, app.config)
+    settings = auth.get_settings()
+    metadata = settings.get_sp_metadata()
+    errors = settings.validate_metadata(metadata)
+
+    if not errors:
+        resp = make_response(metadata, 200)
+        resp.headers['Content-Type'] = 'text/xml'
+    else:
+        resp = make_response(', '.join(errors), 500)
+    return resp
+

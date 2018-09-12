@@ -107,7 +107,7 @@ paths:
       responses:
         200:
           description: foo
-      x-swagger-router-controller: "api"
+      x-swagger-router-controller: "spid"
 
   /attrs:
     get:
@@ -129,7 +129,7 @@ paths:
       responses:
         200:
           description: foo
-      x-swagger-router-controller: "api"
+      x-swagger-router-controller: "spid"
 
 
 definitions:

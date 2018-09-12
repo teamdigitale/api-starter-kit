@@ -28,6 +28,11 @@ which results in
 
 and connect to the API in your browser
 
+	# This URL reloads IdP metadata and
+	# configures the app
+	curl -kv https://172.22.0.2/config
+
+	# Now you can access the login page.
 	firefox https://172.22.0.2
 
 Then follow the login links from there!
