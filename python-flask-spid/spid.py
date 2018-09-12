@@ -10,7 +10,7 @@ from six.moves.urllib.parse import urlparse
 
 from connexion import problem
 from flask import current_app as app
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, make_response
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
@@ -288,7 +288,6 @@ def test_init_saml_authapp():
         current_ip = socket.gethostbyname(socket.gethostname())
         settings = auth.get_settings()
         assert current_ip in auth.get_settings().get_sp_data()["entityId"]
-        raise NotImplementedError
 
 
 def prepare_flask_request(request):
@@ -317,13 +316,13 @@ def get_saml(sso=None, slo=None, return_to=""):
     paint_logout = False
 
     # Redirect requests to IdP
-    if sso is '':
-        if return_to:
+    if sso is not None:
+        if not return_to:
             return redirect(auth.login())
         return_to = pjoin(request.host_url, return_to)
         return redirect(auth.login(return_to))
 
-    if slo is '':
+    if slo is not None:
         name_id = session.get('samlNameId')
         session_index = session.get('samlSessionIndex')
         return redirect(auth.logout(name_id=name_id, session_index=session_index))
@@ -353,7 +352,7 @@ def post_saml(acs=None, sls=None):
     paint_logout = False
     app.logger.warning("acs: %r %r", acs, sls)
     # Inbound replies
-    if acs is '':
+    if acs is not None:
         auth.process_response()
         errors = auth.get_errors()
         not_auth_warn = not auth.is_authenticated()
@@ -364,17 +363,22 @@ def post_saml(acs=None, sls=None):
             self_url = OneLogin_Saml2_Utils.get_self_url(req)
             if self_url != request.form.get('RelayState'):
                 return redirect(auth.redirect_to(request.form['RelayState']))
-            return problem(status=200, title="Login ok")
+            return problem(status=200, title="Login ok", detail="Login successful", ext={
+                "_links": [
+                    {"Current time": pjoin(request.url_root, "echo")},
+                    {"Service status": pjoin(request.url_root, "status")}
+                ]
+            })
         return problem(status=401, title="Cannot Login", detail=errors)
 
-    elif sls is '':
+    elif sls is not None:
         def dscb(): return session.clear()
         url = auth.process_slo(delete_session_cb=dscb)
         errors = auth.get_errors()
         if len(errors) == 0:
             if url is not None:
                 return redirect(url)
-            return problem(status=200, title="Logout ok")
+            return problem(status=200, title="Logout ok", detail="Logout ok")
         return problem(status=500, title="Cannot Logout", detail=errors)
 
     return render_template(

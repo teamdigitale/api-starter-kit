@@ -1,6 +1,6 @@
 import connexion
 from connexion.resolver import Resolver
-
+from connexion import problem
 
 class PonyResolver(Resolver):
 
@@ -27,3 +27,14 @@ def test_oas3():
     ):
         zapp = connexion.FlaskApp(__name__, specification_dir='.',)
         yield zapp.add_api, f
+
+
+def test_problem():
+    problem(status=401,
+            title="Unauthorized",
+            instance="foo",
+            ext={
+                "_links": [
+                    {"href": login_url}
+                ]
+            })

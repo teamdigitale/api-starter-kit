@@ -53,5 +53,5 @@ if __name__ == "__main__":
         zapp.app.config["idp_url"] = args.insecure_idp
 
     zapp.app.before_request(log_it)
-    zapp.add_api('spid.yaml.src', arguments={'title': 'Hello World Example'})
+    zapp.add_api('spid.yaml', arguments={'title': 'Hello World Example'})
     zapp.run(host='0.0.0.0', debug=True, ssl_context='adhoc')

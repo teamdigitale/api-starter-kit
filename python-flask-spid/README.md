@@ -2,6 +2,10 @@
 
 A simple API authenticating with SPID.
 
+NOTE: This API uses the experimental OAS3 branch of
+      the connexion library. Give it a try but
+      use it in production at your own risk ;)
+
 ## Requirements
 
 Docker
