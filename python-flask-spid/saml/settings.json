@@ -11,7 +11,7 @@
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
             "url": "https://rpolli.local:8088/sso"
         },
-        "x509cert": "MIIDODCCAiACAQEwDQYJKoZIhvcNAQELBQAwYjELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBUxhemlvMQ0wCwYDVQQHDARSb21hMRIwEAYDVQQKDAlNeUNvbXBhbnkxDDAKBgNVBAsMA0lEUDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTE4MDkwNjEwMjA1NloXDTI4MDkwMzEwMjA1NlowYjELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBUxhemlvMQ0wCwYDVQQHDARSb21hMRIwEAYDVQQKDAlNeUNvbXBhbnkxDDAKBgNVBAsMA0lEUDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuqu7yAu5lkCvqctIkLQjnHrah0yU+qZpe1WpKGCVF+Y7FW1DIQ/SJL5kqnSq+HQiS5riBtXftv36YmVp1823W9lmdVw2xJ2F34LkUxSQ2bwHzaPfZbLZntuR06Rv75vr3qelVEN2Z33vJnl6mVX6juaCkxW8hFizQvAlSxNxJO/7xbq6A7Xv2p5/djIA2HmrpK7xpFZbBH5IOSssLN1fgxmdMO6yPf533DPj6HFcvtqkvMTa0x3JW9Id10/fvXCbFwwI6sW94ZeZQTb6BQoMYaV4SuCJi6RHimbjPj58EL6y763iAuuPakganUhbR5KRFUY3iBt7dw82Lp9n2c5ecwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBfbvQbqH3MVobs87pzy1byrRb2anTPNNlnhzzxFD6IaQuxWwkuscePHVqeY/NjV8F1UvB+ab0egtm9RP+/ni1De3kpIPr87CYiyFAAEttdmuDZAASQCgGpOWNy2q+e/CBcS7peS2pGkV/aKCDuwcCdaSEu6cxEWgtDucjmDHt1UDVbcnH/Q/rLHXZOWFtZLymOP1PbXsTylY4DcuY8TdxB5gzmNqhxqfBiLP1g1fczxh29Bh2k2QKBhaJmIBIgd9D4VYN/HxGMigii0O4Tvd/+J2IN0UDmAIhX9ViT2qpemYZU4P+sW+XKIGlsU0zgbNwCgnX8EiBY/dnbO5matuIe"
+        "x509cert": "Loaded from idp metadata"
     },
     "sp": {
         "NameIDFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
@@ -21,10 +21,8 @@
         },
         "attributeConsumingService": {
             "requestedAttributes": [
-                {
-                    "isRequired": true,
-                    "name": "fiscalNumber"
-                }
+                {"isRequired": true, "name": "fiscalNumber"},
+                {"isRequired": true, "name": "familyName"}
             ],
             "serviceDescription": "bar",
             "serviceName": "foo"

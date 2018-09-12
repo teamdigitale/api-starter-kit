@@ -7,3 +7,6 @@ RUN apt-get -y update && apt-get install -y \
 
 RUN mkdir /app
 ADD . /app
+WORKDIR /app
+RUN pip install -rrequirements.txt
+ENTRYPOINT ["python", "index.py"]

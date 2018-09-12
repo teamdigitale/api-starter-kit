@@ -4,17 +4,17 @@ from base64 import b64encode
 from os.path import join as pjoin
 from urlparse import urlparse
 
-import requests
-from connexion import problem
 from flask import current_app as app
 from flask import redirect, render_template, request, session
 from lxml.etree import parse
+from requests import get
+from six import StringIO
+
+from connexion import problem
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
-from requests import Timeout, get
-from six import StringIO
 
 logging.basicConfig(level=logging.DEBUG)
 root = logging.getLogger()
@@ -216,7 +216,7 @@ class SpidAuth(OneLogin_Saml2_Auth):
 
 def init_saml_auth(req, config):
     current_ip = socket.gethostbyname(socket.gethostname())
-    base_url = "http://{current_ip}".format(current_ip=current_ip)
+    base_url = "https://{current_ip}".format(current_ip=current_ip)
 
     auth = SpidAuth(req, custom_base_path=pjoin('.', config['SAML_PATH']))
     sp_config = auth.get_settings().get_sp_data()
@@ -231,9 +231,9 @@ def init_saml_auth(req, config):
     if "idp_url" in config:
         try:
             idp_data.update(create_idp_config(config["idp_url"]))
-            print("Updated config: {!r}".format(idp_data))
+            app.logger.warning("Updated config: {!r}".format(idp_data))
         except Exception as e:
-            print(e)
+            app.logger.warning(e)
     return auth
 
 
@@ -250,7 +250,6 @@ def create_idp_config(idp_metadata_url):
     X509 = '//{http://www.w3.org/2000/09/xmldsig#}X509Certificate'
 
     idp_metadata = download_idp_metadata(idp_metadata_url)
-    # import pdb;pdb.set_trace()
     return {
         "singleLogoutService": {
             "url": _get_item(SLO, 'Location'),
@@ -265,11 +264,6 @@ def create_idp_config(idp_metadata_url):
     }
 
 
-def test_create_idp_config():
-    ret = create_idp_config('https://rpolli:8088/metadata')
-    raise NotImplementedError
-
-
 def encode_pem(cert):
     if cert.startswith("-"):
         return cert
@@ -279,7 +273,6 @@ def encode_pem(cert):
         cert.strip("\n"),
         "-----END CERTIFICATE-----"
     ))
-
 
 
 def download_idp_metadata(idp_metadata_url):
@@ -373,7 +366,7 @@ def post_saml(acs=None, sls=None):
             if self_url != request.form.get('RelayState'):
                 return redirect(auth.redirect_to(request.form['RelayState']))
             return problem(status=200, title="Login ok")
-        # return problem(status=500, title="Cannot  Login", detail=errors)
+        return problem(status=401, title="Cannot Login", detail=errors)
 
     elif 'sls' in request.args:
         def dscb(): return session.clear()
@@ -383,7 +376,7 @@ def post_saml(acs=None, sls=None):
             if url is not None:
                 return redirect(url)
             return problem(status=200, title="Logout ok")
-        # return problem(status=500, title="Cannot Logout", detail=errors)
+        return problem(status=500, title="Cannot Logout", detail=errors)
 
     return render_template(
         'index.html',
@@ -394,7 +387,8 @@ def post_saml(acs=None, sls=None):
         paint_logout=paint_logout
     )
 
-    raise NotImplementedError("This should be unreachable", errors)
 
-
+#
+# Courtesy page.
+#
 index = get_saml

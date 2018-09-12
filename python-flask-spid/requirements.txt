@@ -1,4 +1,7 @@
-flask==0.10.1
-python-saml
+flask==1.0
+connexion==1.5.2
+pyOpenSSL==18.0.0
+python-saml==2.4.2
+decorator==4.3.0
 nose
 isort

@@ -1,0 +1,3 @@
+FROM italia/spid-testenv2
+ADD docker-entrypoint.py /docker-entrypoint.py
+ENTRYPOINT ["python", "/docker-entrypoint.py"]
