@@ -2,9 +2,20 @@
 
 A simple API authenticating with SPID.
 
+NOTE: This API uses the development OAS3 branch of
+      the connexion library that will enable the
+      production of python OAS3 compliant API without
+      requiring a conversion. Give it a try but
+      use it in production at your own risk ;)
+
 ## Requirements
 
-Docker
+Just Docker ;)
+
+Further infos:
+
+  - [in the Dockerfile](Dockerfile) you'll find system requirements
+  - [in requirements.txt](requirements.txt) you'll find python requirements
 
 ## Running
 
@@ -29,10 +40,19 @@ which results in
 and connect to the API in your browser
 
 	# This URL reloads IdP metadata and
-	# configures the app
+	# configures the app.
 	curl -kv https://172.22.0.2/config
 
-	# Now you can access the login page.
+	# Now you can access the main page whose link
+        # will bring you to the login procedure.
 	firefox https://172.22.0.2
 
 Then follow the login links from there!
+
+## Run base tests
+
+Run basic tests in docker compose
+
+	docker-compose up test
+
+

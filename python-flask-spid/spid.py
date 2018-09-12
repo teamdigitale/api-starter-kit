@@ -10,7 +10,7 @@ from six.moves.urllib.parse import urlparse
 
 from connexion import problem
 from flask import current_app as app
-from flask import redirect, render_template, request, session
+from flask import make_response, redirect, render_template, request, session
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
@@ -288,7 +288,6 @@ def test_init_saml_authapp():
         current_ip = socket.gethostbyname(socket.gethostname())
         settings = auth.get_settings()
         assert current_ip in auth.get_settings().get_sp_data()["entityId"]
-        raise NotImplementedError
 
 
 def prepare_flask_request(request):
@@ -317,29 +316,33 @@ def get_saml(sso=None, slo=None, return_to=""):
     paint_logout = False
 
     # Redirect requests to IdP
-    if sso is '':
-        if return_to:
+    if sso is not None:
+        if not return_to:
             return redirect(auth.login())
         return_to = pjoin(request.host_url, return_to)
         return redirect(auth.login(return_to))
 
-    if slo is '':
+    if slo is not None:
         name_id = session.get('samlNameId')
         session_index = session.get('samlSessionIndex')
         return redirect(auth.logout(name_id=name_id, session_index=session_index))
 
-    if 'samlUserdata' in session:
-        paint_logout = True
-        if session['samlUserdata']:
-            attributes = session['samlUserdata'].items()
-
-    return render_template(
-        'index.html',
-        errors=errors,
-        not_auth_warn=not_auth_warn,
-        success_slo=success_slo,
-        attributes=attributes,
-        paint_logout=paint_logout
+    return problem(
+        status=400,
+        title="Bad Request",
+        detail="Either `acs` or `sls` should be set.",
+        ext=dict(
+            errors=errors,
+            not_auth_warn=not_auth_warn,
+            success_slo=success_slo,
+            attributes=attributes,
+            ext={
+                "_links": [
+                    {"name": "Login URL", "url": pjoin(request.url_root, "saml?sso")},
+                    {"name": "Logout URL", "url": pjoin(request.url_root, "saml?slo")}
+                ]
+            }
+        )
     )
 
 
@@ -353,10 +356,13 @@ def post_saml(acs=None, sls=None):
     paint_logout = False
     app.logger.warning("acs: %r %r", acs, sls)
     # Inbound replies
-    if acs is '':
+    if acs is not None:
         auth.process_response()
         errors = auth.get_errors()
-        not_auth_warn = not auth.is_authenticated()
+
+        if not auth.is_authenticated():
+            return problem(status=401, title="Cannot Login", detail=errors)
+
         if not errors:
             session['samlUserdata'] = auth.get_attributes()
             session['samlNameId'] = auth.get_nameid()
@@ -364,26 +370,35 @@ def post_saml(acs=None, sls=None):
             self_url = OneLogin_Saml2_Utils.get_self_url(req)
             if self_url != request.form.get('RelayState'):
                 return redirect(auth.redirect_to(request.form['RelayState']))
-            return problem(status=200, title="Login ok")
+            return problem(status=200, title="Login ok", detail="Login successful", ext={
+                "_links": [
+                    {"Current time": pjoin(request.url_root, "echo")},
+                    {"Service status": pjoin(request.url_root, "status")}
+                ]
+            })
         return problem(status=401, title="Cannot Login", detail=errors)
 
-    elif sls is '':
+    elif sls is not None:
         def dscb(): return session.clear()
         url = auth.process_slo(delete_session_cb=dscb)
         errors = auth.get_errors()
         if len(errors) == 0:
             if url is not None:
                 return redirect(url)
-            return problem(status=200, title="Logout ok")
-        return problem(status=500, title="Cannot Logout", detail=errors)
+            return problem(status=200, title="Logout ok", detail="Logout ok")
+        return problem(status=500, title="Cannot Logout", ext=dict(errors=errors))
 
-    return render_template(
-        'index.html',
-        errors=errors,
-        not_auth_warn=not_auth_warn,
-        success_slo=success_slo,
-        attributes=attributes,
-        paint_logout=paint_logout
+    return problem(
+        status=400,
+        title="Bad Request",
+        detail="Either `acs` or `sls` should be set.",
+        ext=dict(
+            errors=errors,
+            not_auth_warn=not_auth_warn,
+            success_slo=success_slo,
+            attributes=attributes,
+            paint_logout=paint_logout
+        )
     )
 
 

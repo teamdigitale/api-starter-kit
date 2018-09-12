@@ -14,7 +14,13 @@ x-commons:
       $ref: '#/components/responses/503ServiceUnavailable'
     default:
       $ref: '#/components/responses/default'
-
+  ratelimit-headers: &ratelimit-headers
+    X-RateLimit-Limit:
+      $ref: '#/components/headers/X-RateLimit-Limit'
+    X-RateLimit-Remaining:
+      $ref: '#/components/headers/X-RateLimit-Remaining'
+    X-RateLimit-Reset:
+      $ref: '#/components/headers/X-RateLimit-Reset'
 openapi: 3.0.0
 info:
   version: "1.0.0"
@@ -82,7 +88,7 @@ tags:
 #   sviluppo e test.
 servers:
   - description: Test server
-    url: https://api.example.com/datetime/v1
+    url: https://api.example.com/
   - description: Development server
     url: https://localhost:8443/datetime/v1
 
@@ -108,12 +114,7 @@ paths:
           # Questi header di throttling sono obbligatori e definiti
           #   nel Nuovo modello di interoperabilità.
           headers:
-            X-RateLimit-Limit:
-              $ref: '#/components/headers/X-RateLimit-Limit'
-            X-RateLimit-Remaining:
-              $ref: '#/components/headers/X-RateLimit-Remaining'
-            X-RateLimit-Reset:
-              $ref: '#/components/headers/X-RateLimit-Reset'
+            <<: *ratelimit-headers
           content:
             application/json:
               schema:
@@ -137,12 +138,7 @@ paths:
           # Questi header di throttling sono obbligatori e definiti
           #   nel Nuovo modello di interoperabilità.
           headers:
-            X-RateLimit-Limit:
-              $ref: '#/components/headers/X-RateLimit-Limit'
-            X-RateLimit-Remaining:
-              $ref: '#/components/headers/X-RateLimit-Remaining'
-            X-RateLimit-Reset:
-              $ref: '#/components/headers/X-RateLimit-Reset'
+            <<: *ratelimit-headers
           content:
             application/json:
               schema:
@@ -202,7 +198,7 @@ paths:
   /:
     get:
       summary: metadata
-      operationId: spid.index
+      operationId: api.index
       responses:
         200:
           description: foo
@@ -220,7 +216,7 @@ paths:
   /attrs:
     get:
       summary: metadata
-      operationId: spid.get_attrs
+      operationId: api.get_attrs
       responses:
         200:
           description: foo

@@ -15,8 +15,16 @@ def is_authenticated(f, *args, **kwargs):
         login_url = pjoin(request.url_root, "saml?sso")
         return problem(status=401,
                        title="Unauthorized",
+                       detail="User not authenticated",
                        instance=request.url,
-                       ext={"_links": [{"href": login_url}]})
+                       headers={
+                           'foo': 'bar'
+                       },
+                       ext={
+                           "_links": [
+                               {"href": login_url}
+                           ]
+                       })
     return f(*args, **kwargs)
 
 
@@ -39,13 +47,16 @@ def get_attrs():
 
 
 def get_status():
-    return problem(status=200, title="Success", ext={"result": "ok"})
+    return problem(status=200, title="Success", detail="Application is up", ext={"result": "ok"})
 
 
 def index():
+    req = prepare_flask_request(request)
+    auth = init_saml_auth(req, app.config)
+    errors = []
     return {
-        "message": "Welcome to the Jungle",
+        "message": "Welcome to the Jungle 1",
         "_links": [
-            {"url": pjoin(request.url_root, "/echo")}
+            {"url": pjoin(request.url_root, "echo")}
         ]
     }

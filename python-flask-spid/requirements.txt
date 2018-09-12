@@ -7,3 +7,4 @@ isort
 autopep8
 swagger-ui-bundle==0.0.2
 https://github.com/dtkav/connexion/archive/oas3.zip
+

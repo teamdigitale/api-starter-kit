@@ -10,7 +10,7 @@ services:
     - .:/code:z
     working_dir: /code
     entrypoint: /bin/sh
-    command: -c 'pip install tox && tox'
+    command: -c 'pip install tox && tox ${TOXARGS}'
 
   spid-testenv:
     build:
