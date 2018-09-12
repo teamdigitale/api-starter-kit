@@ -3,17 +3,18 @@ import socket
 from base64 import b64encode
 from os.path import join as pjoin
 
+from lxml.etree import parse
+from requests import get
+from six import StringIO
+from six.moves.urllib.parse import urlparse
+
 from connexion import problem
 from flask import current_app as app
 from flask import redirect, render_template, request, session
-from lxml.etree import parse
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
-from requests import get
-from six import StringIO
-from six.moves.urllib.parse import urlparse
 
 logging.basicConfig(level=logging.DEBUG)
 root = logging.getLogger()

@@ -18,6 +18,7 @@ def log_it():
 
 
 class PonyResolver(Resolver):
+
     def __init__(self, namespace):
         Resolver.__init__(self)
         self.namespace = namespace

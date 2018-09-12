@@ -3,6 +3,7 @@ from connexion.resolver import Resolver
 
 
 class PonyResolver(Resolver):
+
     def __init__(self, namespace):
         Resolver.__init__(self)
         self.namespace = namespace
