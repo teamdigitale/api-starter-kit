@@ -4,10 +4,9 @@ from base64 import decodestring
 from os.path import dirname
 from os.path import join as pjoin
 
-from flask import request
-
 import connexion
 from connexion.resolver import Resolver
+from flask import request
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
@@ -19,6 +18,7 @@ def log_it():
 
 
 class PonyResolver(Resolver):
+
     def __init__(self, namespace):
         Resolver.__init__(self)
         self.namespace = namespace
