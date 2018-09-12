@@ -5,12 +5,14 @@
 #  - load data from environment
 
 from argparse import ArgumentParser
-import yaml
 from os import mkdir
-from os.path import isfile, isdir, exists, join as pjoin
-from socket import gethostname, gethostbyname
-from subprocess import check_output
+from os.path import exists, isdir, isfile
+from os.path import join as pjoin
 from shlex import split
+from socket import gethostbyname, gethostname
+from subprocess import check_output
+
+import yaml
 from six.moves.urllib.request import urlopen
 
 # Default  settings.

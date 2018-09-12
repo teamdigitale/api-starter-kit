@@ -2,19 +2,18 @@ import logging
 import socket
 from base64 import b64encode
 from os.path import join as pjoin
-from six.moves.urllib.parse import urlparse
 
+from connexion import problem
 from flask import current_app as app
 from flask import redirect, render_template, request, session
 from lxml.etree import parse
-from requests import get
-from six import StringIO
-
-from connexion import problem
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
+from requests import get
+from six import StringIO
+from six.moves.urllib.parse import urlparse
 
 logging.basicConfig(level=logging.DEBUG)
 root = logging.getLogger()
@@ -307,7 +306,7 @@ def prepare_flask_request(request):
     }
 
 
-def get_saml(sso=None, sso2=None, slo=None):
+def get_saml(sso=None, slo=None, return_to=""):
     req = prepare_flask_request(request)
     auth = init_saml_auth(req, app.config)
     errors = []
@@ -318,10 +317,9 @@ def get_saml(sso=None, sso2=None, slo=None):
 
     # Redirect requests to IdP
     if sso is '':
-        return redirect(auth.login())
-
-    if sso2 is '':
-        return_to = '%sattrs/' % request.host_url
+        if return_to:
+            return redirect(auth.login())
+        return_to = pjoin(request.host_url, return_to)
         return redirect(auth.login(return_to))
 
     if slo is '':
@@ -352,7 +350,7 @@ def post_saml(acs=None, sls=None):
     success_slo = False
     attributes = False
     paint_logout = False
-    app.logger.warning("acs: %r %r", acs, sls )
+    app.logger.warning("acs: %r %r", acs, sls)
     # Inbound replies
     if acs is '':
         auth.process_response()
@@ -407,4 +405,3 @@ def get_metadata():
     else:
         resp = make_response(', '.join(errors), 500)
     return resp
-

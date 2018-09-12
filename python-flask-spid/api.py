@@ -1,11 +1,11 @@
 import datetime
 from os.path import join as pjoin
 
+from connexion import problem
 from decorator import decorator
 from flask import current_app as app
 from flask import make_response, redirect, render_template, request, session
 
-from connexion import problem
 from spid import init_saml_auth, prepare_flask_request
 
 
@@ -36,3 +36,16 @@ def get_echo():  # noqa: E501
 def get_attrs():
     attributes = session['samlUserdata'].items()
     return dict(attributes)
+
+
+def get_status():
+    return problem(status=200, title="Success", ext={"result": "ok"})
+
+
+def index():
+    return {
+        "message": "Welcome to the Jungle",
+        "_links": [
+            {"url": pjoin(request.url_root, "/echo")}
+        ]
+    }
