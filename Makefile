@@ -1,3 +1,6 @@
+#
+# Prepare openapi files and run projects in containers.
+#
 YAML=$(shell find * -name \*yaml)
 YAMLSRC=$(shell find openapi -name \*yaml.src)
 YAMLGEN=$(patsubst %.yaml.src,%.yaml,$(YAMLSRC))
@@ -38,5 +41,9 @@ python-flask-quickstart: python-flask-generate
 	(cd python-flask && docker-compose up simple )
 
 
-prj-jaxrs-generate: openapi/simple.yaml
+java-jaxrs-generate: openapi/simple.yaml
 	./scripts/codegen.sh openapi/simple.yaml java-jaxrs 3 jaxrs-resteasy-eap
+
+java-jaxrs-quickstart: java-jaxrs-generate
+	(cd java-jaxrs && docker-compose up simple )
+	
