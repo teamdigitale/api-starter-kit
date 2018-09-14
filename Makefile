@@ -33,6 +33,9 @@ python-flask-generate: openapi/simple.yaml
 python-flask: python-flask-generate
 	(cd python-flask && docker-compose up --build test )
 
+python-flask-spid: openapi/spid.yaml
+	cp openapi/spid.yaml python-flask-spid/spid.yaml
+	(cd python-flask-spid && docker-compose up --build simple spid-testenv)
 
 python-flask-quickstart: python-flask-generate
 	# Test all

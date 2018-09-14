@@ -1,0 +1,34 @@
+#
+# Docker setups to test and develop this application.
+#
+# Build and run all tests via docker-compose up test
+version: "3.0"
+services:
+  test:
+    build: .
+    volumes:
+    - .:/code:z
+    working_dir: /code
+    entrypoint: /bin/sh
+    command: -c 'pip install tox && tox ${TOXARGS}'
+
+  spid-testenv:
+    build:
+      context: .
+      dockerfile: Dockerfile.testenv
+    hostname: spid.local
+    volumes:
+    - .:/code
+    depends_on:
+    - simple
+    command: ["--dummy-config", "--insecure-add-sp", "https://simple/metadata"]
+
+  simple:
+    build: .
+    hostname: simple
+    volumes:
+    - .:/code
+    ports:
+    - "8080:8080"
+    - "8443:8443"
+    command: ["--insecure-add-idp", "https://spid-testenv:8088/metadata"]
