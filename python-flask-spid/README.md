@@ -24,7 +24,9 @@ Start the compose file, which sets up:
   - a spid-testenv2 from the docker hub image
   - an API aka Service Provider
 
-	docker-compose up  simple spid-testenv 
+	docker-compose up -d simple
+	sleep 5;  # give me some startup time ;)
+	docker-compose up -d idp
 
 In another console, retrieve the container ip addresses:
 
@@ -34,7 +36,7 @@ In another console, retrieve the container ip addresses:
 which results in
 
 
-	/pythonflaskspid_spid-testenv_1  172.22.0.3
+	/pythonflaskspid_idp_1  172.22.0.3
 	/pythonflaskspid_simple_1  172.22.0.2
 
 and connect to the API in your browser
@@ -48,6 +50,11 @@ and connect to the API in your browser
 	firefox https://172.22.0.2
 
 Then follow the login links from there!
+
+Now check the actual services:
+
+	firefox https://172.22.0.2/echo
+	firefox https://172.22.0.2/status
 
 ## Run base tests
 

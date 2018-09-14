@@ -12,7 +12,7 @@ services:
     entrypoint: /bin/sh
     command: -c 'pip install tox && tox ${TOXARGS}'
 
-  spid-testenv:
+  idp:
     build:
       context: .
       dockerfile: Dockerfile.testenv
@@ -31,4 +31,4 @@ services:
     ports:
     - "8080:8080"
     - "8443:8443"
-    command: ["--insecure-add-idp", "https://spid-testenv:8088/metadata"]
+    command: ["--insecure-add-idp", "https://idp:8088/metadata"]

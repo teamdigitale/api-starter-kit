@@ -338,8 +338,10 @@ def get_saml(sso=None, slo=None, return_to=""):
             attributes=attributes,
             ext={
                 "_links": [
-                    {"name": "Login URL", "url": pjoin(request.url_root, "saml?sso")},
-                    {"name": "Logout URL", "url": pjoin(request.url_root, "saml?slo")}
+                    {"name": "Login URL", "url": pjoin(
+                        request.url_root, "saml?sso")},
+                    {"name": "Logout URL", "url": pjoin(
+                        request.url_root, "saml?slo")}
                 ]
             }
         )
