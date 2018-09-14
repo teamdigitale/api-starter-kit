@@ -109,10 +109,6 @@ x-commons:
     '406':
       description: >-
         Assenza dell'header di richiesta `Accept: application/json`
-securitySchemes:
-  ldapCredentials:
-    type: http
-    scheme: basic
 #
 # Qui vanno tutti i path.
 #
@@ -127,7 +123,7 @@ paths:
       tags:
         - public
       security:
-        - ldapCredentials
+        - ldapCredentials: []
       parameters:
         - $ref: "#/components/parameters/ipa_code"
       responses:
@@ -153,7 +149,7 @@ paths:
       tags:
         - public
       security:
-        - ldapCredentials
+        - ldapCredentials: []
       parameters:
         - $ref: "#/components/parameters/name"
         - $ref: "#/components/parameters/limit"
@@ -226,3 +222,8 @@ components:
     PA:
       type: object
       description: Una Pubblica Amministrazione.
+
+  securitySchemes:
+    ldapCredentials:
+      type: http
+      scheme: basic
