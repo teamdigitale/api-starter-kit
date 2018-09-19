@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/bash
 # Generate a python-flask app from the swagger.yaml
 set -eo pipefail
 

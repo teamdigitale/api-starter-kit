@@ -91,9 +91,9 @@ paths:
       responses:
         '200':
           content:
-            application/json:
+            application/problem+json:
               schema:
-                $ref: '#/components/schemas/Timestamps'
+                $ref: '#/components/schemas/Problem'
           description: |
             Il server ha ritornato lo status. In caso di problemi
             ritorna sempre un problem+json.
