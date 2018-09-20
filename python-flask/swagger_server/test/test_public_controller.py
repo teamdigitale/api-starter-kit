@@ -6,7 +6,7 @@ from flask import json
 from six import BytesIO
 
 from swagger_server.models.problem import Problem  # noqa: E501
-from swagger_server.models.timestampa import Timestampa  # noqa: E501
+from swagger_server.models.timestamps import Timestamps  # noqa: E501
 from swagger_server.test import BaseTestCase
 
 
