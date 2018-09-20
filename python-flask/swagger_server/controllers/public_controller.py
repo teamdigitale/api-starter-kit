@@ -23,7 +23,7 @@ def get_status():  # noqa: E501
     Ritorna lo stato dell'applicazione.  # noqa: E501
 
 
-    :rtype: Object
+    :rtype: Problem
     """
     p = randint(0, 10)
 
