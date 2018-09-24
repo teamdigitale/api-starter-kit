@@ -173,21 +173,21 @@ paths:
       summary: Manage the following saml operations.
       operationId: spid.post_saml
       parameters:
-      - name: acs
-        schema:
+        - name: acs
+          schema:
             type: string
-        in: query
-        description: Receive Login from IdP
-      - name: slo
-        schema:
+          in: query
+          description: Receive Login from IdP
+        - name: slo
+          schema:
             type: string
-        in: query
-        description: Request Logout to IdP
-      - name: sls
-        schema:
+          in: query
+          description: Request Logout to IdP
+        - name: sls
+          schema:
             type: string
-        in: query
-        description: Receive Logout from IdP
+          in: query
+          description: Receive Logout from IdP
 
       responses:
         200:

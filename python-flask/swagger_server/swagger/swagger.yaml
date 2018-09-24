@@ -41,6 +41,7 @@ paths:
         \ attuale.\n"
       operationId: "get_echo"
       produces:
+      - "application/json"
       - "application/problem+json"
       parameters: []
       responses:
@@ -111,14 +112,14 @@ paths:
         \ randomica puo' ritornare\nun errore.\n"
       operationId: "get_status"
       produces:
-      - "application/json"
+      - "application/problem+json"
       parameters: []
       responses:
         200:
           description: "Il server ha ritornato lo status. In caso di problemi\nritorna\
             \ sempre un problem+json.\n"
           schema:
-            $ref: "#/definitions/Timestamps"
+            $ref: "#/definitions/Problem"
           headers:
             X-RateLimit-Limit:
               type: "integer"

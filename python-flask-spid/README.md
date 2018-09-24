@@ -24,9 +24,9 @@ Start the compose file, which sets up:
   - a spid-testenv2 from the docker hub image
   - an API aka Service Provider
 
-	docker-compose up -d simple
-	sleep 5;  # give me some startup time ;)
-	docker-compose up -d idp
+        docker-compose up -d simple
+        sleep 5;  # give me some startup time ;)
+        docker-compose up -d idp
 
 In another console, retrieve the container ip addresses:
 

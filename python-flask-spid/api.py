@@ -5,7 +5,8 @@ from decorator import decorator
 
 from connexion import problem
 from flask import current_app as app
-from flask import make_response, redirect, render_template, request, session
+from flask import request, session
+from random import randint
 from spid import init_saml_auth, prepare_flask_request
 
 
@@ -47,7 +48,39 @@ def get_attrs():
 
 
 def get_status():
-    return problem(status=200, title="Success", detail="Application is up", ext={"result": "ok"})
+    """Ritorna lo stato dell'applicazione.
+
+    Ritorna lo stato dell'applicazione.  # noqa: E501
+
+
+    :rtype: Problem
+    """
+    p = randint(0, 10)
+
+    if p < 7:
+        return problem(status=200, title="Success",
+                       detail="Il servizio funziona correttamente",
+                       ext={"result": "ok"},
+                       headers={
+                           'Cache-control': 'no-cache'
+                       })
+    if p < 9:
+        return problem(status=503, title="Service Unavailable",
+                       detail="Questo errore viene ritornato randomicamente.",
+                       headers={
+                           'Retry-After': '1',
+                           'Cache-control': 'no-cache'
+                       })
+
+    return problem(status=429, title="Too Many Requests",
+                   detail="Questo errore viene ritornato randomicamente.",
+                   headers={
+                       'Cache-control': 'no-cache',
+                       'X-RateLimit-Limit': '10',
+                       'X-RateLimit-Reset': '1',
+                       'X-RateLimit-Remaining': '0',
+                       'Retry-After': '1',
+                   })
 
 
 def index():

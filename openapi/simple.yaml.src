@@ -5,6 +5,13 @@
 #   potrai integrarla facilmente in Developers Italia.
 #
 x-commons:
+  ratelimit-headers: &ratelimit-headers
+    X-RateLimit-Limit:
+      $ref: '#/components/headers/X-RateLimit-Limit'
+    X-RateLimit-Remaining:
+      $ref: '#/components/headers/X-RateLimit-Remaining'
+    X-RateLimit-Reset:
+      $ref: '#/components/headers/X-RateLimit-Reset'
   common-responses: &common-responses
     '400':
       $ref: '#/components/responses/400BadRequest'
@@ -108,12 +115,7 @@ paths:
           # Questi header di throttling sono obbligatori e definiti
           #   nel Nuovo modello di interoperabilità.
           headers:
-            X-RateLimit-Limit:
-              $ref: '#/components/headers/X-RateLimit-Limit'
-            X-RateLimit-Remaining:
-              $ref: '#/components/headers/X-RateLimit-Remaining'
-            X-RateLimit-Reset:
-              $ref: '#/components/headers/X-RateLimit-Reset'
+            <<: *ratelimit-headers
           content:
             application/json:
               schema:
@@ -137,16 +139,11 @@ paths:
           # Questi header di throttling sono obbligatori e definiti
           #   nel Nuovo modello di interoperabilità.
           headers:
-            X-RateLimit-Limit:
-              $ref: '#/components/headers/X-RateLimit-Limit'
-            X-RateLimit-Remaining:
-              $ref: '#/components/headers/X-RateLimit-Remaining'
-            X-RateLimit-Reset:
-              $ref: '#/components/headers/X-RateLimit-Reset'
+            <<: *ratelimit-headers
           content:
-            application/json:
+            application/problem+json:
               schema:
-                $ref: '#/components/schemas/Timestamps'
+                $ref: '#/components/schemas/Problem'
 
 components:
 

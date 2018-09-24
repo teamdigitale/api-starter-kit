@@ -1,0 +1,5 @@
+flask_testing
+nose
+isort
+autopep8
+

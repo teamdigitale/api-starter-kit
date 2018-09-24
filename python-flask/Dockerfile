@@ -1,4 +1,4 @@
-FROM python:3-alpine
+FROM python:3.6-alpine
 RUN apk add --no-cache libffi-dev build-base openssl-dev
 
 RUN mkdir -p /usr/src/app
