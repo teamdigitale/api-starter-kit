@@ -3,18 +3,16 @@ import socket
 from base64 import b64encode
 from os.path import join as pjoin
 
+from connexion import problem
+from flask import current_app as app
+from flask import make_response, redirect, request, session
 from lxml.etree import parse
+from onelogin.saml2.auth import OneLogin_Saml2_Auth
+from onelogin.saml2.constants import OneLogin_Saml2_Constants
+from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from requests import get
 from six import StringIO
 from six.moves.urllib.parse import urlparse
-
-from connexion import problem
-from flask import current_app as app
-from flask import make_response, redirect, render_template, request, session
-from onelogin.saml2.auth import OneLogin_Saml2_Auth
-from onelogin.saml2.constants import OneLogin_Saml2_Constants
-from onelogin.saml2.settings import OneLogin_Saml2_Settings
-from onelogin.saml2.utils import OneLogin_Saml2_Utils
 
 logging.basicConfig(level=logging.DEBUG)
 root = logging.getLogger()
@@ -286,7 +284,7 @@ def test_init_saml_authapp():
         req = prepare_flask_request(request)
         auth = init_saml_auth(req, app.config)
         current_ip = socket.gethostbyname(socket.gethostname())
-        settings = auth.get_settings()
+        auth.get_settings()
         assert current_ip in auth.get_settings().get_sp_data()["entityId"]
 
 
@@ -313,7 +311,6 @@ def get_saml(sso=None, slo=None, return_to=""):
     not_auth_warn = False
     success_slo = False
     attributes = False
-    paint_logout = False
 
     # Redirect requests to IdP
     if sso is not None:
