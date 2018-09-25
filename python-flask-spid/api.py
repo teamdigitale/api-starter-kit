@@ -1,12 +1,11 @@
 import datetime
 from os.path import join as pjoin
-
-from decorator import decorator
+from random import randint
 
 from connexion import problem
+from decorator import decorator
 from flask import current_app as app
 from flask import request, session
-from random import randint
 from spid import init_saml_auth, prepare_flask_request
 
 
@@ -85,8 +84,7 @@ def get_status():
 
 def index():
     req = prepare_flask_request(request)
-    auth = init_saml_auth(req, app.config)
-    errors = []
+    init_saml_auth(req, app.config)
     return {
         "message": "Welcome to the Jungle 1",
         "_links": [

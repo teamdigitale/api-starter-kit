@@ -1,22 +1,32 @@
 import argparse
-import logging
 from base64 import decodestring
-from os.path import dirname
-from os.path import join as pjoin
+from logging import basicConfig
+from logging.config import dictConfig
+from os.path import dirname, isfile, join as pjoin
 
 import connexion
+import yaml
+from flask import current_app as app
 from flask import request
 
-logging.basicConfig(level=logging.DEBUG)
-log = logging.getLogger()
+
+def configure_logger(log_config='logging.yaml'):
+    """Configure the logging subsystem."""
+    if not isfile(log_config):
+        return basicConfig()
+
+    with open(log_config) as fh:
+        log_config = yaml.load(fh)
+        return dictConfig(log_config)
 
 
 def log_it():
     saml_response = request.form.get("SAMLResponse", "")
-    log.debug(decodestring(saml_response))
+    app.logger.debug(decodestring(saml_response))
 
 
 if __name__ == "__main__":
+    configure_logger()
     parser = argparse.ArgumentParser()
 
     parser.add_argument(

@@ -2,7 +2,6 @@ import datetime
 from random import randint
 
 from connexion import problem
-
 from swagger_server.models.timestamps import Timestamps  # noqa: E501
 
 

@@ -6,14 +6,13 @@
 
 from argparse import ArgumentParser
 from os import mkdir
-from os.path import exists, isdir, isfile
+from os.path import exists
 from os.path import join as pjoin
 from shlex import split
 from socket import gethostbyname, gethostname
 from subprocess import check_output
 
 import yaml
-from six.moves.urllib.request import urlopen
 
 # Default  settings.
 hostname = gethostbyname(gethostname())
