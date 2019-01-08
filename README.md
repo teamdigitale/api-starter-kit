@@ -46,6 +46,20 @@ Il file `Makefile` contiene:
 Il generatore non sovrascrive i file contenuti in `.swagger-codegen-ignore`.
 
 
+  - un esempio completo di API native in OAS3 che si autenticano con uno SPID IDP 
+    di test.  Per fare il build dei container con l'IDP e l'API lanciare:
+
+        make python-flask-spid
+
+    Le applicazioni verranno servite sugli IP dei container docker, che e' possibile
+    individuare utilizzando
+
+        docker inspect --format '{{.Name}} {{.NetworkSettings.IPAddress}} {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' [ELENCO DEI CONTAINER]
+
+    Se l'API non trova l'IDP, basta ricrearlo con:
+
+        docker-compose up -d idp 
+
 ## Python
 
 ### Usare HTTPS
