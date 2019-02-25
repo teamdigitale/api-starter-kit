@@ -4,13 +4,19 @@ from random import randint
 from connexion import problem
 from flask import Response
 from flask import request
+from flask import current_app as app
+import jwt
 
 # from api import is_authenticated
-from message import validate_token, create_token, sign_token
+from message import create_token, sign_request, validate_token
+from errors import invalid_token_handler
 
 AA_URL = "https://localhost/"
 
-MOCK_DB = {"MRORSS77T05E472I": {"driving_license": "UX1234567"}}
+MOCK_DB = {
+    "MRORSS77T05E472I": {"driving_license": "UX1234567"},
+    "XKFLNX28D67Q295Q": {"driving_license": "UX1234567"},
+}
 
 
 def get_attribute_simple(taxCode):
@@ -27,24 +33,44 @@ def get_attribute_simple(taxCode):
         return problem(title="User Not Found", status=404, detail="Missing user")
 
     try:
-        claims = validate_token(request.data)
+        claims = validate_token(request.data, audience=app.config["entityId"])
+    except jwt.exceptions.InvalidTokenError as e:
+        return invalid_token_handler(e)
     except Exception as e:
         raise ValueError(e, request.data)
 
     assert claims["v"] == "0.0.1", claims
     assert claims["attributes"], claims
 
-    aa = [{"attribute": a, "value": [a]}
-          for a in claims["attributes"] if a in user_data]
+    aa = [
+        {"attribute": a, "value": user_data[a]}
+        for a in claims["attributes"]
+        if a in user_data
+    ]
 
-    response = create_token({"v": "0.0.1", "attributes": aa})
+    token = create_token({"v": "0.0.1", "attributes": aa})
+    token["iss"] = app.config["entityId"]
+    token["aud"] = claims["iss"]
+
+    signed_token = sign_request(
+        token,
+        app_config=app.config
+    )
+
     return Response(
-        response=sign_token(response), status=200, mimetype="application/jose"
+        response=signed_token, status=200, mimetype="application/jose"
     )
 
 
 def get_attribute_complex(taxCode):
     raise NotImplementedError
+
+
+def get_metadata():
+    return {
+        "x509cert": open(app.config["https_cert_file"]).read().replace("\n", ""),
+        "entityId": app.config["entityId"],
+    }
 
 
 def get_status():
@@ -89,7 +115,10 @@ def get_status():
 
 def index():
     return {
-        "_links": {
-            "url": pjoin(request.url_root, "attribute/driving_license/MRRRSS77T05E472I")
-        }
+        "_links": [
+            {"url": pjoin(
+                request.url_root, "attribute/driving_license/MRRRSS77T05E472I"
+            )},
+            {"url": pjoin(request.url_root, "metadata")}
+        ]
     }

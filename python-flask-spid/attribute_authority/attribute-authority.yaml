@@ -74,7 +74,7 @@ paths:
               schema:
                 type: string
           description: A list to the possible paths.
-      summary: metadata
+      summary: AA Index.
   /attributes/driving_license/{taxCode}:
     post:
       description: |
@@ -108,6 +108,18 @@ paths:
       summary: Ritorna la patente di un soggetto.
       tags:
       - public
+  /metadata:
+    get:
+      operationId: attribute_authority.get_metadata
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metadata'
+          description: Metadata list.
+      summary: metadata
+
   /status:
     get:
       description: |
@@ -121,7 +133,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Timestamps'
+                $ref: '#/components/schemas/Problem'
           description: |
             Il server ha ritornato lo status. In caso di problemi
             ritorna sempre un problem+json.
@@ -275,11 +287,18 @@ components:
           format: uri
           type: string
       type: object
-    Timestamps:
-      description: Un Timestamp in RFC5424
+    Metadata:
+      description: Metatada for AA
       properties:
+        entityID:
+          example: "https://172.24.0.3/aa/v1/metadata"
+          format: uri
+          type: string
+        x509cert:
+          example: 'PEMblablabla'
+          format: x509
+          type: string
         timestamp:
           example: '2018-12-30T12:23:32Z'
           format: date-time
           type: string
-      type: object

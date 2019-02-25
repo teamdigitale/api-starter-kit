@@ -26,9 +26,18 @@ services:
   simple:
     build: .
     hostname: simple
+    working_dir: /code
     volumes:
     - .:/code
-    ports:
-    - "8080:8080"
-    - "8443:8443"
+    command: ["--insecure-add-idp", "https://idp:8088/metadata"]
+
+  aa:
+    build: .
+    hostname: simple
+    working_dir: /code
+    volumes:
+    - .:/code
+    entrypoint:
+    - python
+    - aa.py
     command: ["--insecure-add-idp", "https://idp:8088/metadata"]
