@@ -58,15 +58,15 @@ paths:
             text/html: {}
           description: foo
       summary: metadata
-  /attrs:
+  /my-attributes:
     get:
       operationId: api.get_attrs
       responses:
         200:
           content:
-            application/xml: {}
-          description: foo
-      summary: metadata
+            application/json: {}
+          description: Show all user attributes stored in the spid session.
+      summary: Return all passed user attributes.
   /config:
     get:
       operationId: spid.get_config
@@ -108,6 +108,17 @@ paths:
       summary: Ritorna un timestamp in formato RFC5424.
       tags:
       - public
+  /aa/attributes/{attribute}:
+    get:
+      operationId: api.get_attribute_simple
+      parameters:
+        - name: attribute
+          schema:
+            type: string
+          in: path
+      responses:
+        200:
+          description: Return a given attribute, taken from the AA.
   /metadata:
     get:
       operationId: spid.get_metadata

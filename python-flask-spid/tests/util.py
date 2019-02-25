@@ -6,8 +6,9 @@ def noop(*args, **kwds):
 
 
 class FakeResolver(Resolver):
+
     def __init__(self, me):
-        FakeResolver.__init__(self)
+        Resolver.__init__(self)
         self.me = me
 
     def resolve_operation_id(self, operation):
@@ -20,4 +21,4 @@ class FakeResolver(Resolver):
             oid = oid.split(".")[-1]
         # Append the operation function to this module.
         setattr(self.me, oid, noop)
-        return "test_oas." + oid
+        return self.me.__name__ + "." + oid
