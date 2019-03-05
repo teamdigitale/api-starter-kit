@@ -6,7 +6,6 @@ def noop(*args, **kwds):
 
 
 class FakeResolver(Resolver):
-
     def __init__(self, me):
         Resolver.__init__(self)
         self.me = me

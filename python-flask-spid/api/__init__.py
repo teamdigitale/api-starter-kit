@@ -93,29 +93,36 @@ def get_attribute_simple(attribute="driving_license"):
 
     token = create_token({"v": "0.0.1", "attributes": [attribute]})
     token["iss"] = app.config["entityId"]
-    token["aud"] = 'https://172.24.0.2/aa/v1/metadata'
+    token["aud"] = "https://172.24.0.2/aa/v1/metadata"
     token = sign_request(token, app_config=app.config, alg="RS256")
 
     ret = post(
-        AA_URL, data=token, verify=False, headers={
-            "content-type": "application/jose"}
+        AA_URL, data=token, verify=False, headers={"content-type": "application/jose"}
     )
     if ret.status_code != 200:
         app.logger.error(ret.content)
-        aa_problem = problem(instance=AA_URL,
-                             status=ret.status_code,
-                             title="errore della AA",  detail=ret.content)
+        aa_problem = problem(
+            instance=AA_URL,
+            status=ret.status_code,
+            title="errore della AA",
+            detail=ret.content,
+        )
         return aa_problem
 
     try:
-        attributes = validate_request(ret.content.decode(
-            "utf8"), alg="ES256", app_config=app.config)
+        attributes = validate_request(
+            ret.content.decode("utf8"), alg="ES256", app_config=app.config
+        )
     except jwt.exceptions.InvalidTokenError as e:
         return invalid_token_handler(e)
     except Exception as e:
         raise ValueError(e, request.data)
 
     return attributes
+
+
+@is_authenticated
+def get_attribute_consent(attribute="invalido_di_guerra"):
     raise NotImplementedError
 
 

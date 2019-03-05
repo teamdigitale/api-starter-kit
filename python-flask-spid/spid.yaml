@@ -119,6 +119,18 @@ paths:
       responses:
         200:
           description: Return a given attribute, taken from the AA.
+  /aa/consent-attributes/{attribute}:
+    get:
+      summary: Ritorna un attributo che richiede un consenso dell'utente.
+      operationId: api.get_attribute_consent
+      parameters:
+      - name: attribute
+        schema:
+          type: string
+        in: path
+      responses:
+        200:
+          description: Return a given attribute, taken from the AA.
   /metadata:
     get:
       operationId: spid.get_metadata

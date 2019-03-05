@@ -96,7 +96,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AttributeRequest'
-
       responses:
         <<: *common_responses
         '200':
@@ -104,10 +103,72 @@ paths:
             application/jose: {}
           description: |
             Il server ha ritornato gli attributi richiesti.
-
       summary: Ritorna la patente di un soggetto.
       tags:
       - public
+  /consent-attributes/invalido_di_guerra/{taxCode}:
+    post:
+      description: |
+        Ritorna se una persona è invalido di guerra
+      operationId: attribute_authority.get_attribute_consent
+      parameters:
+      - name: taxCode
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: A JWS containing a claim.
+        required: true
+        content:
+          application/jose:
+            schema:
+              type: string
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttributeRequest'
+      responses:
+        <<: *common_responses
+        '200':
+          content:
+            application/jose: {}
+          description: |
+            Il server ha ritornato gli attributi richiesti.
+        '403':
+          content:
+            application/jose: {}
+          description: |
+            La richiesta richiede un consenso.
+  /consents/{taxCode}:
+    post:
+      description: |
+        Ritorna un consenso.
+      operationId: attribute_authority.get_consent
+      parameters:
+      - name: taxCode
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: A JWS containing a claim.
+        required: true
+        content:
+          application/jose:
+            schema:
+              type: string
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentRequest'
+      responses:
+        <<: *common_responses
+        '200':
+          content:
+            application/jose: {}
+          description: |
+            Il server imposta il consenso sullo store dell'utente.
+
+
   /metadata:
     get:
       operationId: attribute_authority.get_metadata
@@ -229,6 +290,19 @@ components:
             $ref: '#/components/schemas/Problem'
       description: Unexpected error
   schemas:
+    ConsentRequest:
+      properties:
+        request_token:
+          description: A request token based jose+jws
+          type: string
+          example:
+            v:
+              description: versione della AA
+            attributes:
+              type: array
+              item:
+                type: string
+
     AttributeRequest:
       properties:
         request_token:

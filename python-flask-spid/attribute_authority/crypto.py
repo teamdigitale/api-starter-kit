@@ -26,16 +26,19 @@ def safe_system(cmd):
 def init_certs():
     # Default  settings.
     hostname = gethostbyname(gethostname())
-    basedir = '.tmpdir'
+    basedir = ".tmpdir"
     dummy_config = {
-        'entityId': 'https://{hostname}/aa/v1/metadata'.format(hostname=hostname),
-        'https_key_file': pjoin(basedir, hostname + '.key'),
-        'https_cert_file': pjoin(basedir, hostname + '.crt'),
+        "entityId": "https://{hostname}/aa/v1/metadata".format(hostname=hostname),
+        "https_key_file": pjoin(basedir, hostname + ".key"),
+        "https_cert_file": pjoin(basedir, hostname + ".crt"),
     }
-    mkcert(dummy_config['https_key_file'],
-           dummy_config['https_cert_file'], hostname, 'AA')
-    dummy_config.update({
-        "privateKey": open(dummy_config['https_key_file']).read(),
-        "x509cert": open(dummy_config['https_cert_file']).read(),
-    })
+    mkcert(
+        dummy_config["https_key_file"], dummy_config["https_cert_file"], hostname, "AA"
+    )
+    dummy_config.update(
+        {
+            "privateKey": open(dummy_config["https_key_file"]).read(),
+            "x509cert": open(dummy_config["https_cert_file"]).read(),
+        }
+    )
     return dummy_config

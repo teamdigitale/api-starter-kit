@@ -1,11 +1,13 @@
 from os.path import join as pjoin
 from random import randint
+from time import time
 
 from connexion import problem
 from flask import Response
 from flask import request
 from flask import current_app as app
 import jwt
+from datetime import datetime
 
 # from api import is_authenticated
 from message import create_token, sign_request, validate_token
@@ -14,8 +16,16 @@ from errors import invalid_token_handler
 AA_URL = "https://localhost/"
 
 MOCK_DB = {
-    "MRORSS77T05E472I": {"driving_license": "UX1234567"},
-    "XKFLNX28D67Q295Q": {"driving_license": "UX1234567"},
+    "MRORSS77T05E472I": {
+        "driving_license": "UX1234567",
+        "invalido_di_guerra": True,
+        "consent": 0,
+    },
+    "XKFLNX28D67Q295Q": {
+        "driving_license": "UX1234567",
+        "invalido_di_guerra": True,
+        "consent": 0,
+    },
 }
 
 
@@ -52,18 +62,75 @@ def get_attribute_simple(taxCode):
     token["iss"] = app.config["entityId"]
     token["aud"] = claims["iss"]
 
-    signed_token = sign_request(
-        token,
-        app_config=app.config
-    )
+    signed_token = sign_request(token, app_config=app.config)
 
-    return Response(
-        response=signed_token, status=200, mimetype="application/jose"
-    )
+    return Response(response=signed_token, status=200, mimetype="application/jose")
 
 
-def get_attribute_complex(taxCode):
+def get_attribute_consent(taxCode):
+    """Receives a token and asks for permission if
+       required.
+    Return
+    :param taxCode:
+    :return:
+    """
+    content_type = request.headers.get("Content-Type", "")
+    assert content_type.lower() == "application/jose"
+
+    user_data = MOCK_DB.get(taxCode)
+    if not user_data:
+        return problem(title="User Not Found", status=404, detail="Missing user")
+
+    try:
+        claims = validate_token(request.data, audience=app.config["entityId"])
+    except jwt.exceptions.InvalidTokenError as e:
+        return invalid_token_handler(e)
+    except Exception as e:
+        raise ValueError(e, request.data)
+
+    assert claims["v"] == "0.0.1", claims
+    assert claims["attributes"], claims
+
+    if user_data["consent"] + 100 < time():
+        return problem(
+            status=403,
+            title="ConsentRequired",
+            detail="User consent is required for this attribute. Last given: %r"
+            % datetime.fromtimestamp(user_data["consent"]),
+            type="https://spid.gov.it/aa/problem/consent-required",
+            ext={"consent_url": "https://aa/v1/consents/{taxCode}/"},
+        )
+
+    aa = [
+        {"attribute": a, "value": user_data[a]}
+        for a in claims["attributes"]
+        if a in user_data
+    ]
+
+    token = create_token({"v": "0.0.1", "attributes": aa})
+    token["iss"] = app.config["entityId"]
+    token["aud"] = claims["iss"]
+
+    signed_token = sign_request(token, app_config=app.config)
+
     raise NotImplementedError
+    return Response(response=signed_token, status=200, mimetype="application/jose")
+
+
+def get_consent(taxCode):
+    content_type = request.headers.get("Content-Type", "")
+    assert content_type.lower() == "application/jose"
+
+    user_data = MOCK_DB.get(taxCode)
+    if not user_data:
+        return problem(title="User Not Found", status=404, detail="Missing user")
+
+    user_data["consent"] = time()
+    return problem(
+        title="OK",
+        status=200,
+        detail="Consent given until %r" % datetime.fromtimestamp(user_data["consent"]),
+    )
 
 
 def get_metadata():
@@ -116,9 +183,11 @@ def get_status():
 def index():
     return {
         "_links": [
-            {"url": pjoin(
-                request.url_root, "attribute/driving_license/MRRRSS77T05E472I"
-            )},
-            {"url": pjoin(request.url_root, "metadata")}
+            {
+                "url": pjoin(
+                    request.url_root, "attribute/driving_license/MRRRSS77T05E472I"
+                )
+            },
+            {"url": pjoin(request.url_root, "metadata")},
         ]
     }

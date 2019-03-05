@@ -13,7 +13,6 @@ me = sys.modules[__name__]
 
 
 class BaseTestCase(TestCase):
-
     def create_app(self):
         logging.getLogger("connexion.operation").setLevel("ERROR")
         app = connexion.App(__name__, specification_dir=".")
@@ -40,12 +39,10 @@ class TestPublicController(BaseTestCase):
         """Test case for get_echo
         """
         response = self.client.open("/echo", method="GET")
-        self.assert401(response, "Response body is : " +
-                       response.data.decode("utf-8"))
+        self.assert401(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_get_metadata_unauthenticated(self):
         """Test case for get_metadata
         """
         response = self.client.open("/metadata", method="GET")
-        self.assert200(response, "Response body is : " +
-                       response.data.decode("utf-8"))
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
