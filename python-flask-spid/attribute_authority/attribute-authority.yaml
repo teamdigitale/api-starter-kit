@@ -142,7 +142,7 @@ paths:
   /consents/{taxCode}:
     get:
       description: |
-        Ritorna un consenso.
+        Mostra il form di richiesta di consenso.
       operationId: attribute_authority.get_consent
       parameters:
       - name: taxCode
@@ -156,6 +156,17 @@ paths:
         schema:
           type: string
           format: url
+      - name: consent
+        in: query
+        required: true
+        schema:
+          type: string
+          format: jws
+      - name: accept
+        in: query
+        required: false
+        schema:
+          type: string
       responses:
         <<: *common_responses
         '200':

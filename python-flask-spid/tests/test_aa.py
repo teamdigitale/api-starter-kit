@@ -73,7 +73,9 @@ class TestPublicController(BaseTestCase):
         )
 
     def test_parse_and_validate_response_jose(self):
-        token = create_token({"v": "0.0.1", "attributes": ["driving_license"]})
+        token = create_token(
+            {"v": "0.0.1", "attributes": ["driving_license"]}
+        )
         token["aud"] = self.dummy_config["entityId"]
         response = self.harn_post(
             "/aa/v1/attributes/driving_license/%s", "MRORSS77T05E472I", token
@@ -123,7 +125,7 @@ class TestPublicController(BaseTestCase):
             response, "Response body is : " + response.data.decode("utf-8")
         )
 
-    def test_get_consent(self):
+    def test_post_consent(self):
         token = create_token(
             {"v": "0.0.1", "attributes": ["invalido_di_guerra"]}
         )
@@ -146,7 +148,9 @@ class TestPublicController(BaseTestCase):
         token["aud"] = self.dummy_config["entityId"]
         # set consent.
         response = self.harn_post(
-            "/aa/v1/consents/%s?callback_url=foo", "MRORSS77T05E472I", token
+            "/aa/v1/consents/%s?callback_url=foo&consent=bar",
+            "MRORSS77T05E472I",
+            token,
         )
         self.assert200(
             response, "Response body is : " + response.data.decode("utf-8")
@@ -160,3 +164,55 @@ class TestPublicController(BaseTestCase):
         self.assert200(
             response, "Response body is : " + response.data.decode("utf-8")
         )
+
+    def test_get_consent_menu(self):
+        token = create_token(
+            {"v": "0.0.1", "attributes": ["invalido_di_guerra"]}
+        )
+        token["aud"] = self.dummy_config["entityId"]
+
+        signed = sign_token(
+            token,
+            key=self.private_key,
+            headers={
+                "typ": "JWT",
+                "alg": "ES256",
+                "x5c": [pem_to_x5c(self.public_cert)],
+            },
+        )
+
+        response = self.client.open(
+            "/aa/v1/consents/%s?callback_url=foo&consent={signed}".format(
+                signed=signed
+            )
+        )
+        self.assert200(
+            response, "Response body is : " + response.data.decode("utf-8")
+        )
+        assert response.json["token"]["attributes"]
+
+    def test_get_consent_accept(self):
+        token = create_token(
+            {"v": "0.0.1", "attributes": ["invalido_di_guerra"]}
+        )
+        token["aud"] = self.dummy_config["entityId"]
+
+        signed = sign_token(
+            token,
+            key=self.private_key,
+            headers={
+                "typ": "JWT",
+                "alg": "ES256",
+                "x5c": [pem_to_x5c(self.public_cert)],
+            },
+        )
+
+        response = self.client.open(
+            "/aa/v1/consents/%s?callback_url=foo&consent={signed}&accept=yes".format(
+                signed=signed
+            )
+        )
+        self.assert200(
+            response, "Response body is : " + response.data.decode("utf-8")
+        )
+        assert response.json["token"]["attributes"]

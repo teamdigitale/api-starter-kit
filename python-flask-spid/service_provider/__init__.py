@@ -146,7 +146,9 @@ def get_attribute_consent(attribute="invalido_di_guerra"):
     )
 
     if ret.status_code == 403:
-        return go_to_get_consent(taxCode, callback_url=request.url)
+        return go_to_get_consent(
+            taxCode, callback_url=request.url, consent=token
+        )
 
     if ret.status_code != 200:
         app.logger.error(ret.content)
@@ -170,17 +172,22 @@ def get_attribute_consent(attribute="invalido_di_guerra"):
     return attributes
 
 
-def go_to_get_consent(taxCode, callback_url=None):
+def go_to_get_consent(taxCode, callback_url=None, consent=None):
     # TODO simple implementation of getting consent via a GET
     # instead of a POST with token.
     return {
         "_link": [
             {
                 "description": "You should go and get consent to the following link",
-                "url": "https://{aa_host}/aa/v1/consents/{taxCode}?callback_url={callback_url}".format(
+                "url": (
+                    "https://{aa_host}/aa/v1/consents/{taxCode}?"
+                    "callback_url={callback_url}"
+                    "&consent={consent}"
+                ).format(
                     aa_host=gethostbyname("aa"),
                     taxCode=taxCode,
                     callback_url=callback_url,
+                    consent=consent,
                 ),
             }
         ]

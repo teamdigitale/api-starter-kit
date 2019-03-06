@@ -28,7 +28,10 @@ def mkcert(key_path, cert_path, hostname, ou):
 
     safe_system(
         ssl_command.format(
-            key_path=key_path, cert_path=cert_path, hostname=hostname, ou="IDP"
+            key_path=key_path,
+            cert_path=cert_path,
+            hostname=hostname,
+            ou="IDP",
         )
     )
 

@@ -29,6 +29,13 @@ MOCK_DB = {
 }
 
 
+def _get_user_data(taxCode):
+    if set(taxCode) == {"0", "Z"}:
+        return None
+    _, user_data = next(iter(MOCK_DB.items()))
+    return user_data
+
+
 def get_attribute_simple(taxCode):
     """
     Return
@@ -38,12 +45,11 @@ def get_attribute_simple(taxCode):
     content_type = request.headers.get("Content-Type", "")
     assert content_type.lower() == "application/jose"
 
-    # Tax codes like ZZZ..OO..Z are used for testing absence.
-    if set(taxCode) == {"0", "Z"}:
+    user_data = _get_user_data(taxCode)
+    if not user_data:
         return problem(
             title="User Not Found", status=404, detail="Missing user"
         )
-    _, user_data = next(iter(MOCK_DB.items()))
 
     try:
         claims = validate_token(request.data, audience=app.config["entityId"])
@@ -82,7 +88,7 @@ def get_attribute_consent(taxCode):
     content_type = request.headers.get("Content-Type", "")
     assert content_type.lower() == "application/jose"
 
-    user_data = MOCK_DB.get(taxCode)
+    user_data = _get_user_data(taxCode)
     if not user_data:
         return problem(
             title="User Not Found", status=404, detail="Missing user"
@@ -98,7 +104,7 @@ def get_attribute_consent(taxCode):
     assert claims["v"] == "0.0.1", claims
     assert claims["attributes"], claims
 
-    if user_data["consent"] + 100 < time():
+    if user_data["consent"] + 30 < time():
         return problem(
             status=403,
             title="ConsentRequired",
@@ -126,20 +132,17 @@ def get_attribute_consent(taxCode):
 
 
 def post_consent(taxCode, callback_url):
-    if request.method == "POST":
-        content_type = request.headers.get("Content-Type", "")
-        assert content_type.lower() == "application/jose"
-    return get_consent(taxCode, callback_url)
+    content_type = request.headers.get("Content-Type", "")
+    assert content_type.lower() == "application/jose"
 
-
-def get_consent(taxCode, callback_url):
-    user_data = MOCK_DB.get(taxCode)
+    user_data = _get_user_data(taxCode)
     if not user_data:
         return problem(
             title="User Not Found", status=404, detail="Missing user"
         )
 
     user_data["consent"] = time()
+
     return problem(
         title="OK",
         status=200,
@@ -147,6 +150,40 @@ def get_consent(taxCode, callback_url):
         % datetime.fromtimestamp(user_data["consent"]),
         ext={"_link": [{"url": callback_url}]},
     )
+
+
+def get_consent(taxCode, callback_url, consent, accept=False):
+    user_data = _get_user_data(taxCode)
+    if not user_data:
+        return problem(
+            title="User Not Found", status=404, detail="Missing user"
+        )
+
+    if not accept:
+        token = validate_token(
+            consent, valid=False, audience=app.config["entityId"]
+        )
+        return problem(
+            title="OK",
+            status=200,
+            detail="Do you want to give access to %r for the following jwt"
+            % token["iss"],
+            ext={
+                "_link": [{"url": request.url + "&accept=yes"}],
+                "callback_url": callback_url,
+                "token": token,
+            },
+        )
+
+    user_data["consent"] = time()
+
+    return problem(
+        title="Redirecting to consent",
+        status=302,
+        detail="Redirecto to POST",
+        headers={"Location": callback_url},
+    )
+    raise NotImplementedError
 
 
 def get_metadata():
