@@ -266,7 +266,11 @@ def encode_pem(cert):
     if cert.startswith("-"):
         return cert
 
-    return
+    return '\n'.join((
+        "-----BEGIN CERTIFICATE-----",
+        cert.strip("\n"),
+        "-----END CERTIFICATE-----"
+    ))
 
 
 def download_idp_metadata(idp_metadata_url):

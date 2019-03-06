@@ -38,11 +38,12 @@ def get_attribute_simple(taxCode):
     content_type = request.headers.get("Content-Type", "")
     assert content_type.lower() == "application/jose"
 
-    user_data = MOCK_DB.get(taxCode)
-    if not user_data:
+    # Tax codes like ZZZ..OO..Z are used for testing absence.
+    if set(taxCode) == {"0", "Z"}:
         return problem(
             title="User Not Found", status=404, detail="Missing user"
         )
+    _, user_data = next(iter(MOCK_DB.items()))
 
     try:
         claims = validate_token(request.data, audience=app.config["entityId"])
