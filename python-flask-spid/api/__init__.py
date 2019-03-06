@@ -1,6 +1,7 @@
 import datetime
 from os.path import join as pjoin
 from random import randint
+from socket import gethostbyname
 
 from connexion import problem
 from decorator import decorator
@@ -8,7 +9,11 @@ from flask import current_app as app
 from flask import request, session
 from spid import init_saml_auth, prepare_flask_request
 from requests import post
-from attribute_authority.message import create_token, sign_request, validate_request
+from attribute_authority.message import (
+    create_token,
+    sign_request,
+    validate_request,
+)
 from attribute_authority.errors import invalid_token_handler
 import jwt
 
@@ -90,14 +95,17 @@ def get_status():
 def get_attribute_simple(attribute="driving_license"):
     taxCode = "".join(session["samlUserdata"]["fiscalNumber"])
     AA_URL = pjoin("https://aa/aa/v1/attributes/", attribute, taxCode)
-
+    gethostbyname("aa")
     token = create_token({"v": "0.0.1", "attributes": [attribute]})
     token["iss"] = app.config["entityId"]
-    token["aud"] = "https://172.24.0.2/aa/v1/metadata"
+    token["aud"] = "https://%s/aa/v1/metadata" % gethostbyname("aa")
     token = sign_request(token, app_config=app.config, alg="RS256")
 
     ret = post(
-        AA_URL, data=token, verify=False, headers={"content-type": "application/jose"}
+        AA_URL,
+        data=token,
+        verify=False,
+        headers={"content-type": "application/jose"},
     )
     if ret.status_code != 200:
         app.logger.error(ret.content)
@@ -123,7 +131,60 @@ def get_attribute_simple(attribute="driving_license"):
 
 @is_authenticated
 def get_attribute_consent(attribute="invalido_di_guerra"):
-    raise NotImplementedError
+    taxCode = "".join(session["samlUserdata"]["fiscalNumber"])
+    AA_URL = pjoin("https://aa/aa/v1/consent-attributes/", attribute, taxCode)
+    token = create_token({"v": "0.0.1", "attributes": [attribute]})
+    token["iss"] = app.config["entityId"]
+    token["aud"] = "https://%s/aa/v1/metadata" % gethostbyname("aa")
+    token = sign_request(token, app_config=app.config, alg="RS256")
+
+    ret = post(
+        AA_URL,
+        data=token,
+        verify=False,
+        headers={"content-type": "application/jose"},
+    )
+
+    if ret.status_code == 403:
+        return go_to_get_consent(taxCode, callback_url=request.url)
+
+    if ret.status_code != 200:
+        app.logger.error(ret.content)
+        aa_problem = problem(
+            instance=AA_URL,
+            status=ret.status_code,
+            title="errore della AA",
+            detail=ret.content,
+        )
+        return aa_problem
+
+    try:
+        attributes = validate_request(
+            ret.content.decode("utf8"), alg="ES256", app_config=app.config
+        )
+    except jwt.exceptions.InvalidTokenError as e:
+        return invalid_token_handler(e)
+    except Exception as e:
+        raise ValueError(e, request.data)
+
+    return attributes
+
+
+def go_to_get_consent(taxCode, callback_url=None):
+    # TODO simple implementation of getting consent via a GET
+    # instead of a POST with token.
+    return {
+        "_link": [
+            {
+                "description": "You should go and get consent to the following link",
+                "url": "https://{aa_host}/aa/v1/consents/{taxCode}?callback_url={callback_url}".format(
+                    aa_host=gethostbyname("aa"),
+                    taxCode=taxCode,
+                    callback_url=callback_url,
+                ),
+            }
+        ]
+    }
 
 
 def index():
@@ -138,7 +199,9 @@ def index():
                 "description": "Show all user idp-attributes.",
             },
             {
-                "url": pjoin(request.url_root, "aa/attributes/driving_license"),
+                "url": pjoin(
+                    request.url_root, "aa/attributes/driving_license"
+                ),
                 "description": "Show driving license from Attribute Authority",
             },
         ],

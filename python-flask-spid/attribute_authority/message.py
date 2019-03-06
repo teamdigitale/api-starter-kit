@@ -13,7 +13,10 @@ from cryptography.hazmat.primitives.serialization import (
     load_der_private_key,
     load_pem_private_key,
 )
-from cryptography.x509 import load_der_x509_certificate, load_pem_x509_certificate
+from cryptography.x509 import (
+    load_der_x509_certificate,
+    load_pem_x509_certificate,
+)
 
 ENCRYPTION_KEY = "secret"
 
@@ -81,7 +84,9 @@ def sign_request(token, app_config=None, alg="ES256"):
     elif is_x5c(app_config["x509cert"]):
         x5c = app_config["x509cert"]
     else:
-        raise ValueError("Not an embeddable certificate: %s" % app_config["x509cert"])
+        raise ValueError(
+            "Not an embeddable certificate: %s" % app_config["x509cert"]
+        )
 
     return sign_token(
         token,
@@ -108,7 +113,9 @@ def sign_token(token, key=None, alg="ES256", **kwargs):
     if "alg" in kwargs.get("headers", {}):
         assert kwargs["headers"]["alg"] == alg
     if is_pem(key):
-        key = load_pem_private_key(key, password=None, backend=default_backend())
+        key = load_pem_private_key(
+            key, password=None, backend=default_backend()
+        )
     elif is_x5c(key):
         key = load_der_private_key(
             decodestring(key), password=None, backend=default_backend()
@@ -118,7 +125,9 @@ def sign_token(token, key=None, alg="ES256", **kwargs):
     return jwt.encode(token, key, alg, **kwargs)
 
 
-def validate_token(content, audience="ipa/oou", key=None, alg="ES256", **kwargs):
+def validate_token(
+    content, audience="ipa/oou", key=None, alg="ES256", **kwargs
+):
 
     # If no key is provided, check x5c.
     if not key:
@@ -134,4 +143,6 @@ def validate_token(content, audience="ipa/oou", key=None, alg="ES256", **kwargs)
     elif key.startswith("-" * 5):
         key = pem_to_x509(key).public_key()
 
-    return jwt.decode(content, key, audience=audience, algorithms=[alg], **kwargs)
+    return jwt.decode(
+        content, key, audience=audience, algorithms=[alg], **kwargs
+    )

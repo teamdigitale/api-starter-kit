@@ -64,7 +64,10 @@ class TestPublicController(BaseTestCase):
         print("signed_token" + signed)
         return self.client.open(
             path % taxCode,
-            headers={"Content-Type": "application/jose", "Accept": "application/json"},
+            headers={
+                "Content-Type": "application/jose",
+                "Accept": "application/json",
+            },
             method="POST",
             data=signed,
         )
@@ -75,7 +78,9 @@ class TestPublicController(BaseTestCase):
         response = self.harn_post(
             "/aa/v1/attributes/driving_license/%s", "MRORSS77T05E472I", token
         )
-        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
+        self.assert200(
+            response, "Response body is : " + response.data.decode("utf-8")
+        )
         try:
             validate_token(response.data.decode("utf-8"))
         except Exception as e:
@@ -87,29 +92,71 @@ class TestPublicController(BaseTestCase):
         response = self.harn_post(
             "/aa/v1/attributes/driving_license/%s", "MRORSS77T05E472I", data
         )
-        self.assert400(response, "Response body is : " + response.data.decode("utf-8"))
+        self.assert400(
+            response, "Response body is : " + response.data.decode("utf-8")
+        )
 
     def test_get_status_unauthenticated(self):
         response = self.client.open("/aa/v1/status", method="GET")
-        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
+        self.assert200(
+            response, "Response body is : " + response.data.decode("utf-8")
+        )
 
     def test_get_metadata(self):
         response = self.client.open("/aa/v1/metadata", method="GET")
-        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
+        self.assert200(
+            response, "Response body is : " + response.data.decode("utf-8")
+        )
         assert "entityId" in response.json
 
     def test_missing_consent(self):
-        token = create_token({"v": "0.0.1", "attributes": ["invalido_di_guerra"]})
+        token = create_token(
+            {"v": "0.0.1", "attributes": ["invalido_di_guerra"]}
+        )
         token["aud"] = self.dummy_config["entityId"]
         response = self.harn_post(
-            "/aa/v1/consent-attributes/invalido_di_guerra/%s", "MRORSS77T05E472I", token
+            "/aa/v1/consent-attributes/invalido_di_guerra/%s",
+            "MRORSS77T05E472I",
+            token,
         )
-        self.assert403(response, "Response body is : " + response.data.decode("utf-8"))
+        self.assert403(
+            response, "Response body is : " + response.data.decode("utf-8")
+        )
 
     def test_get_consent(self):
-        token = create_token({"v": "0.0.1", "attributes": ["invalido_di_guerra"]})
+        token = create_token(
+            {"v": "0.0.1", "attributes": ["invalido_di_guerra"]}
+        )
         token["aud"] = self.dummy_config["entityId"]
-        response = self.harn_post("/aa/v1/consents/%s", "XKFLNX28D67Q295Q", token)
-        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
+        response = self.harn_post(
+            "/aa/v1/consents/%s?callback_url=https://foo",
+            "XKFLNX28D67Q295Q",
+            token,
+        )
+        self.assert200(
+            response, "Response body is : " + response.data.decode("utf-8")
+        )
 
         assert "detail" in response.json
+
+    def test_with_consent(self):
+        token = create_token(
+            {"v": "0.0.1", "attributes": ["invalido_di_guerra"]}
+        )
+        token["aud"] = self.dummy_config["entityId"]
+        # set consent.
+        response = self.harn_post(
+            "/aa/v1/consents/%s?callback_url=foo", "MRORSS77T05E472I", token
+        )
+        self.assert200(
+            response, "Response body is : " + response.data.decode("utf-8")
+        )
+        #
+        response = self.harn_post(
+            "/aa/v1/consent-attributes/invalido_di_guerra/%s",
+            "MRORSS77T05E472I",
+            token,
+        )
+        self.assert200(
+            response, "Response body is : " + response.data.decode("utf-8")
+        )

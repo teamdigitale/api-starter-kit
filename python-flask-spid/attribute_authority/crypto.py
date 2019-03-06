@@ -28,12 +28,17 @@ def init_certs():
     hostname = gethostbyname(gethostname())
     basedir = ".tmpdir"
     dummy_config = {
-        "entityId": "https://{hostname}/aa/v1/metadata".format(hostname=hostname),
+        "entityId": "https://{hostname}/aa/v1/metadata".format(
+            hostname=hostname
+        ),
         "https_key_file": pjoin(basedir, hostname + ".key"),
         "https_cert_file": pjoin(basedir, hostname + ".crt"),
     }
     mkcert(
-        dummy_config["https_key_file"], dummy_config["https_cert_file"], hostname, "AA"
+        dummy_config["https_key_file"],
+        dummy_config["https_cert_file"],
+        hostname,
+        "AA",
     )
     dummy_config.update(
         {

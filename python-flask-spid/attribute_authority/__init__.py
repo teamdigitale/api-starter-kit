@@ -40,7 +40,9 @@ def get_attribute_simple(taxCode):
 
     user_data = MOCK_DB.get(taxCode)
     if not user_data:
-        return problem(title="User Not Found", status=404, detail="Missing user")
+        return problem(
+            title="User Not Found", status=404, detail="Missing user"
+        )
 
     try:
         claims = validate_token(request.data, audience=app.config["entityId"])
@@ -64,7 +66,9 @@ def get_attribute_simple(taxCode):
 
     signed_token = sign_request(token, app_config=app.config)
 
-    return Response(response=signed_token, status=200, mimetype="application/jose")
+    return Response(
+        response=signed_token, status=200, mimetype="application/jose"
+    )
 
 
 def get_attribute_consent(taxCode):
@@ -79,7 +83,9 @@ def get_attribute_consent(taxCode):
 
     user_data = MOCK_DB.get(taxCode)
     if not user_data:
-        return problem(title="User Not Found", status=404, detail="Missing user")
+        return problem(
+            title="User Not Found", status=404, detail="Missing user"
+        )
 
     try:
         claims = validate_token(request.data, audience=app.config["entityId"])
@@ -113,29 +119,40 @@ def get_attribute_consent(taxCode):
 
     signed_token = sign_request(token, app_config=app.config)
 
-    raise NotImplementedError
-    return Response(response=signed_token, status=200, mimetype="application/jose")
+    return Response(
+        response=signed_token, status=200, mimetype="application/jose"
+    )
 
 
-def get_consent(taxCode):
-    content_type = request.headers.get("Content-Type", "")
-    assert content_type.lower() == "application/jose"
+def post_consent(taxCode, callback_url):
+    if request.method == "POST":
+        content_type = request.headers.get("Content-Type", "")
+        assert content_type.lower() == "application/jose"
+    return get_consent(taxCode, callback_url)
 
+
+def get_consent(taxCode, callback_url):
     user_data = MOCK_DB.get(taxCode)
     if not user_data:
-        return problem(title="User Not Found", status=404, detail="Missing user")
+        return problem(
+            title="User Not Found", status=404, detail="Missing user"
+        )
 
     user_data["consent"] = time()
     return problem(
         title="OK",
         status=200,
-        detail="Consent given until %r" % datetime.fromtimestamp(user_data["consent"]),
+        detail="Consent given until %r"
+        % datetime.fromtimestamp(user_data["consent"]),
+        ext={"_link": [{"url": callback_url}]},
     )
 
 
 def get_metadata():
     return {
-        "x509cert": open(app.config["https_cert_file"]).read().replace("\n", ""),
+        "x509cert": open(app.config["https_cert_file"])
+        .read()
+        .replace("\n", ""),
         "entityId": app.config["entityId"],
     }
 
@@ -185,7 +202,8 @@ def index():
         "_links": [
             {
                 "url": pjoin(
-                    request.url_root, "attribute/driving_license/MRRRSS77T05E472I"
+                    request.url_root,
+                    "attribute/driving_license/MRRRSS77T05E472I",
                 )
             },
             {"url": pjoin(request.url_root, "metadata")},

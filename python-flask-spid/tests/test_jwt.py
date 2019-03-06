@@ -11,7 +11,9 @@ def test_sign_verify():
     public_key = open("/tmp/1.pem", "r").read()
 
     token = sign_token(
-        {"aud": "ipa/oou"}, key=private_key, headers={"typ": "JWT", "alg": "ES256"}
+        {"aud": "ipa/oou"},
+        key=private_key,
+        headers={"typ": "JWT", "alg": "ES256"},
     )
     validate_token(token, audience="ipa/oou", key=public_key)
 
@@ -23,7 +25,11 @@ def test_sign_verify_x5c():
     token = sign_token(
         {"aud": "ipa/oou"},
         key=private_key,
-        headers={"typ": "JWT", "alg": "ES256", "x5c": [pem_to_x5c(public_pem)]},
+        headers={
+            "typ": "JWT",
+            "alg": "ES256",
+            "x5c": [pem_to_x5c(public_pem)],
+        },
     )
     validate_token(token, audience="ipa/oou")
 
@@ -33,6 +39,8 @@ def test_sign_verify_noaud():
     public_pem = open("/tmp/1.pem", "r").read()
 
     token = sign_token(
-        {"aud": "ipa/oou"}, key=private_key, headers={"typ": "JWT", "alg": "ES256"}
+        {"aud": "ipa/oou"},
+        key=private_key,
+        headers={"typ": "JWT", "alg": "ES256"},
     )
     validate_token(token, key=public_pem)

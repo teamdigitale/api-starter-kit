@@ -140,7 +140,7 @@ paths:
           description: |
             La richiesta richiede un consenso.
   /consents/{taxCode}:
-    post:
+    get:
       description: |
         Ritorna un consenso.
       operationId: attribute_authority.get_consent
@@ -150,6 +150,35 @@ paths:
         required: true
         schema:
           type: string
+      - name: callback_url
+        in: query
+        required: true
+        schema:
+          type: string
+          format: url
+      responses:
+        <<: *common_responses
+        '200':
+          content:
+            application/jose: {}
+          description: |
+            Il server imposta il consenso sullo store dell'utente.
+    post:
+      description: |
+        Ritorna un consenso.
+      operationId: attribute_authority.post_consent
+      parameters:
+      - name: taxCode
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: callback_url
+        in: query
+        required: true
+        schema:
+          type: string
+          format: url
       requestBody:
         description: A JWS containing a claim.
         required: true

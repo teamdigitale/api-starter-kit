@@ -7,8 +7,8 @@ from flask import request
 def invalid_token_handler(exception):
     try:
         deserialized = jwt.decode(request.data, verify=0)
-    except Exception:
-        deserialized = {}
+    except Exception as e:
+        deserialized = {"err": repr(e)}
     return problem(
         title="invalid token",
         status=400,
