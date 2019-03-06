@@ -16,13 +16,13 @@ class BaseTestCase(TestCase):
     def create_app(self):
         logging.getLogger("connexion.operation").setLevel("ERROR")
         app = connexion.App(__name__, specification_dir=".")
-        app.add_api("../spid.yaml")
+        app.add_api("../service_provider/service-provider.yaml")
         app.app.config["SAML_PATH"] = "../saml/"
         return app.app
 
 
 def test_oas3():
-    files = ("spid.yaml",)
+    files = ("../service_provider/service-provider.yaml",)
 
     def assert_parse_oas3(zapp, f):
         zapp.add_api(f, resolver=FakeResolver())

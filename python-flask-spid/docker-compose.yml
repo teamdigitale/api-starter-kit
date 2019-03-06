@@ -29,15 +29,18 @@ services:
     working_dir: /code
     volumes:
     - .:/code
+    environment:
+      PYTHONPATH: "/code:"
+    entrypoint: ["python", "-m", "service_provider"]
     command: ["--insecure-add-idp", "https://idp:8088/metadata"]
 
   aa:
     build: .
     hostname: simple
     working_dir: /code
+    environment:
+      PYTHONPATH: "/code:"
     volumes:
     - .:/code
-    entrypoint:
-    - python
-    - aa.py
+    entrypoint: ["python", "-m", "attribute_authority"]
     command: ["--insecure-add-idp", "https://idp:8088/metadata"]

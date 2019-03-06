@@ -51,7 +51,7 @@ tags:
 paths:
   /:
     get:
-      operationId: api.index
+      operationId: service_provider.index
       responses:
         200:
           content:
@@ -60,7 +60,7 @@ paths:
       summary: metadata
   /my-attributes:
     get:
-      operationId: api.get_attrs
+      operationId: service_provider.get_attrs
       responses:
         200:
           content:
@@ -81,7 +81,7 @@ paths:
       description: |
         Ritorna un timestamp in formato RFC5424
         prendendola dal server attuale.
-      operationId: api.get_echo
+      operationId: service_provider.get_echo
       responses:
         '200':
           content:
@@ -110,7 +110,7 @@ paths:
       - public
   /aa/attributes/{attribute}:
     get:
-      operationId: api.get_attribute_simple
+      operationId: service_provider.get_attribute_simple
       parameters:
         - name: attribute
           schema:
@@ -122,7 +122,7 @@ paths:
   /aa/consent-attributes/{attribute}:
     get:
       summary: Ritorna un attributo che richiede un consenso dell'utente.
-      operationId: api.get_attribute_consent
+      operationId: service_provider.get_attribute_consent
       parameters:
       - name: attribute
         schema:
@@ -193,7 +193,7 @@ paths:
         Ritorna lo stato dell'applicazione. A scopo
         di test, su base randomica puo' ritornare
         un errore.
-      operationId: api.get_status
+      operationId: service_provider.get_status
       responses:
         '200':
           content:
