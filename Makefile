@@ -41,10 +41,3 @@ python-flask-quickstart: python-flask-generate
 	# Build and run the application
 	(cd python-flask && docker-compose up simple )
 
-
-java-jaxrs-generate: openapi/simple.yaml
-	./scripts/codegen.sh openapi/simple.yaml java-jaxrs 3 jaxrs-resteasy-eap
-
-java-jaxrs-quickstart: java-jaxrs-generate
-	(cd java-jaxrs && docker-compose up simple )
-	
