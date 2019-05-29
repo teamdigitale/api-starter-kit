@@ -37,11 +37,6 @@ riferimenti esterni.
 ### Generare il codice del server
 Il file `Makefile` contiene:
 
-  - un esempio di code generation java direttamente via openapi v3. Basta 
-    lanciare:
-
-        make java-jaxrs
-
   - un esempio completo di conversione delle specifiche a v2 e generazione del server in python.
     Per convertire e generare il codice in `python-flask` lanciare:
 
