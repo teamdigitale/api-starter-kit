@@ -3,6 +3,9 @@
 #
 #   circleci-local build
 #
+anchors:
+- key_cache: &key_cache v1-cache-{{ checksum "openapi/simple.yaml.src" }}
+
 version: 2
 jobs:
   build:
@@ -15,3 +18,44 @@ jobs:
             apk add git make
             pip install tox
             make yaml
+  java-client:
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+    steps:
+    - checkout
+
+    # restore the saved cache after the first run or if `pom.xml` has changed
+    # REMEMBER: cache doesn't affect local builds
+    - restore_cache:
+        key: *key_cache
+
+    - run:
+        command: >-
+          curl -v 'https://generator3.swagger.io/api/generate' -XPOST -d
+          '{"specURL": "https://raw.githubusercontent.com/teamdigitale/api-starter-kit/'${CIRCLE_BRANCH}'/openapi/simple.yaml.src", "lang": "java"}'
+          -H'content-type: application/json' -o foo.zip
+
+    - run:
+        command: |
+          unzip -d java foo.zip
+
+    - run: |
+        cd java-
+        mvn dependency:go-offline # gets the project dependencies
+
+    - save_cache: # saves the project dependencies
+        paths:
+          - ~/.m2
+        key: *key_cache
+
+    - run: |
+        cd java
+        mvn package # gets the project dependencies
+
+workflows:
+  version: 2
+  continuous-deploy:
+    jobs:
+      - build
+      - java-client
+

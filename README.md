@@ -1,5 +1,7 @@
 # Starter kit per la pubblicazione su API interoperabili
 
+[![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit)
+
 
 Questo repository contiene il template di un progetto utile a pubblicare delle API interoperabili.
 
