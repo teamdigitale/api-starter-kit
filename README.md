@@ -3,6 +3,10 @@
 
 Questo repository contiene il template di un progetto utile a pubblicare delle API interoperabili.
 
+Progetti associati:
+
+- [API Starter Kit per Java](https://github.com/teamdigitale/api-starter-kit-java)
+
 ## Contenuto
 
 - Un progetto di esempio in python
