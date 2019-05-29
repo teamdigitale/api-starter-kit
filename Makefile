@@ -9,15 +9,13 @@ yaml: $(YAMLGEN)
 
 .ONESHELL:
 %.yaml: %.yaml.src
-	. .tox/py36/bin/activate
-	yamllint $<
-	python -m openapi_resolver $< $@
+	tox -e yamllint -- $<
+	tox -e yaml --  $< $@
 
 
 
 yamllint: $(YAML)
-	. .tox/py36/bin/activate
-	yamllint $?
+	tox -e yamllint -- $?
 
 # Create a simple project starting from OpenAPI v3 spec
 #  in simple.yaml.
