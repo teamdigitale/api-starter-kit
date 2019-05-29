@@ -40,7 +40,7 @@ jobs:
           unzip -d java foo.zip
 
     - run: |
-        cd java-
+        cd java
         mvn dependency:go-offline # gets the project dependencies
 
     - save_cache: # saves the project dependencies
