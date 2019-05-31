@@ -1,7 +1,13 @@
 # Starter kit per la pubblicazione su API interoperabili
 
+[![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit)
+
 
 Questo repository contiene il template di un progetto utile a pubblicare delle API interoperabili.
+
+Progetti associati:
+
+- [API Starter Kit per Java](https://github.com/teamdigitale/api-starter-kit-java)
 
 ## Contenuto
 
@@ -32,11 +38,6 @@ riferimenti esterni.
 
 ### Generare il codice del server
 Il file `Makefile` contiene:
-
-  - un esempio di code generation java direttamente via openapi v3. Basta 
-    lanciare:
-
-        make java-jaxrs
 
   - un esempio completo di conversione delle specifiche a v2 e generazione del server in python.
     Per convertire e generare il codice in `python-flask` lanciare:
