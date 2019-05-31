@@ -11,6 +11,7 @@ yaml: $(YAMLGEN)
 %.yaml: %.yaml.src
 	tox -e yamllint -- $<
 	tox -e yaml --  $< $@
+	tox -e valid_oas 
 
 
 

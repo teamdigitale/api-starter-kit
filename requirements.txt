@@ -1,2 +1,3 @@
 openapi_resolver==0.0.5
+openapi-spec-validator
 yamllint
