@@ -4,6 +4,10 @@
 # Stai per sviluppare un API? Segui attentamente questo template e
 #   potrai integrarla facilmente in Developers Italia.
 #
+# Se usi componenti in modo ricorrente, yaml
+#   permette di definirle e riusarle.
+#   Puoi metterle nell'oggetto x-commons e rimuoverlo
+#   prima di pubblicarle.
 x-commons:
   ratelimit-headers: &ratelimit-headers
     X-RateLimit-Limit:
@@ -38,6 +42,15 @@ info:
 
     `2018-12-30T12:23:32Z`
 
+    Qui va' inserita la documentazione principale del servizio.
+    Il testo dev'essere diviso in piu' parti, tutte scritte in Markdown.
+
+    Questa sezione e' informativa. Ricordati di inserire:
+
+      * cosa fanno queste API?
+      * chi puo' beneficiarne?
+      * perche' sono utili?
+
     ##### Sottosezioni
     E' possibile utilizzare - con criterio - delle sottosezioni.
 
@@ -45,6 +58,9 @@ info:
 
     Il servizio non richiede autenticazione, ma va' usato rispettando gli
     header di throttling esposti in conformita' alle Linee Guida del Modello di interoperabilita'.
+
+    Usa questa sezione per annotazioni specifiche, riferimenti normativi e/o
+    per manleve ed esclusioni di responsabilita' eventualmente non incluse in `termsOfService`.
 
     #### Informazioni tecniche ed esempi
 
@@ -56,6 +72,11 @@ info:
       'datetime': '2018-12-30T12:23:32Z'
     }
     ```
+
+    Qui e' possibile introdurre brevi informazioni tecniche ed esempi.
+    Attenzione: la `description` non sostituisce la documentazione di progetto,
+    deve pero' facilitare l'esecuzione delle prime richieste.
+
 
   # I termini del servizio contengono un riferimento
   #   a tutte le indicazioni e le note legali per l'utilizzo
@@ -76,6 +97,15 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+  # Per dare indicazioni sul ciclo di vita dell'API
+  # si puo' usare un parametro come:
+  x-lifecycle:
+    published: 1970-01-01
+    deprecated: 2050-01-01
+    retired: 2050-06-01
+    maturity: published
+
 # Una lista di `tag` utili a raggruppare le varie operazioni
 #   eseguite dalle API. Ogni `tag` puo' referenziare un link
 #   alla sua descrizione.
@@ -87,12 +117,19 @@ tags:
 # Uno o piu' server di erogazione.
 #   Puo' essere utile indicare gli indirizzi di collaudo,
 #   sviluppo e test.
+#   Di seguito mostriamo come indicare se il server
+#   e' una sandbox o meno con dei tag custom.
 servers:
-  - description: Test server
-    url: https://api.example.com/datetime/v1
   - description: Development server
     url: https://localhost:8443/datetime/v1
-
+  - description: Test server
+    url: https://api.example.com/datetime/v1
+    x-sandbox: true
+    # Questo parametro indica come testare il servizio.
+    x-healthCheck:
+      url: https://api.example.com/datetime/v1/status
+      interval: 300
+      timeout: 15
 
 #
 # Qui vanno tutti i path.
@@ -149,30 +186,30 @@ components:
 
   headers:
     X-RateLimit-Limit:
-      $ref: 'https://teamdigitale.github.io/openapi/headers/v3.yaml#/X-RateLimit-Limit'
+      $ref: 'https://teamdigitale.github.io/openapi/0.0.5/definitions.yaml#/headers/X-RateLimit-Limit'
     X-RateLimit-Remaining:
-      $ref: 'https://teamdigitale.github.io/openapi/headers/v3.yaml#/X-RateLimit-Remaining'
+      $ref: 'https://teamdigitale.github.io/openapi/0.0.5/definitions.yaml#/headers/X-RateLimit-Remaining'
     X-RateLimit-Reset:
-      $ref: 'https://teamdigitale.github.io/openapi/headers/v3.yaml#/X-RateLimit-Reset'
+      $ref: 'https://teamdigitale.github.io/openapi/0.0.5/definitions.yaml#/headers/X-RateLimit-Reset'
     Retry-After:
-      $ref: 'https://teamdigitale.github.io/openapi/headers/v3.yaml#/Retry-After'
+      $ref: 'https://teamdigitale.github.io/openapi/0.0.5/definitions.yaml#/headers/Retry-After'
 
   responses:
     # Predefined error codes for this API
     400BadRequest:
-      $ref: 'https://teamdigitale.github.io/openapi/responses/v3.yaml#/400BadRequest'
+      $ref: 'https://teamdigitale.github.io/openapi/0.0.5/definitions.yaml#/responses/400BadRequest'
     404NotFound:
-      $ref: 'https://teamdigitale.github.io/openapi/responses/v3.yaml#/404NotFound'
+      $ref: 'https://teamdigitale.github.io/openapi/0.0.5/definitions.yaml#/responses/404NotFound'
     429TooManyRequests:
-      $ref: 'https://teamdigitale.github.io/openapi/responses/v3.yaml#/429TooManyRequests'
+      $ref: 'https://teamdigitale.github.io/openapi/0.0.5/definitions.yaml#/responses/429TooManyRequests'
     503ServiceUnavailable:
-      $ref: 'https://teamdigitale.github.io/openapi/responses/v3.yaml#/503ServiceUnavailable'
+      $ref: 'https://teamdigitale.github.io/openapi/0.0.5/definitions.yaml#/responses/503ServiceUnavailable'
     default:
-      $ref: 'https://teamdigitale.github.io/openapi/responses/v3.yaml#/default'
+      $ref: 'https://teamdigitale.github.io/openapi/0.0.5/definitions.yaml#/responses/default'
 
   schemas:
     Problem:
-      $ref: 'https://teamdigitale.github.io/openapi/schemas/problem.yaml#/Problem'
+      $ref: 'https://teamdigitale.github.io/openapi/0.0.5/definitions.yaml#/schemas/Problem'
     Timestamps:
       type: object
       description: Un Timestamp in RFC5424
