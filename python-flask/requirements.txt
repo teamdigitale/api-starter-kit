@@ -1,5 +1,0 @@
-connexion == 2.2.0
-python_dateutil == 2.6.0
-pyOpenSSL==18.0.0
-setuptools >= 21.0.0
-rfc5424-logging-handler==1.2.1

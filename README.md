@@ -7,7 +7,9 @@ Questo repository contiene il template di un progetto utile a pubblicare delle A
 
 Progetti associati:
 
-- [API Starter Kit per Java](https://github.com/teamdigitale/api-starter-kit-java)
+- [API Starter Kit per Java](https://github.com/teamdigitale/api-starter-kit-java) [![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit-java.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit-java)
+- [API Starter Kit per Python](https://github.com/teamdigitale/api-starter-kit-python) [![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit-python.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit-python)
+
 
 ## Contenuto
 
@@ -29,6 +31,7 @@ Gli step per la creazione di API interoperabili sono:
 TBD
 
 ### Convertire tra vari formati
+
 La directory `scripts` contiene dei tool per convertire tra vari formati.
 Prima di convertire le specifiche bisogna verificare che non ci siano
 riferimenti esterni.
@@ -36,16 +39,40 @@ riferimenti esterni.
         # Generare delle specifiche swagger a partire da openapi.
         ./scripts/openapi2swagger.sh openapi/simple.yaml > /tmp/swagger.yaml
 
-### Generare il codice del server
-Il file `Makefile` contiene:
+### Effettuare il bundle di una specifica
 
-  - un esempio completo di conversione delle specifiche a v2 e generazione del server in python.
-    Per convertire e generare il codice in `python-flask` lanciare:
+Per agevolare la scrittura delle specifiche è possibile utilizzare feature come:
 
-        make python-flask
+- yaml anchors
+- json `$ref`erences
+
+Per consolidare le specifiche in un singolo file, autonomamente spendibile,
+è possibile creare un bundle col comando:
+
+	python -m openapi_resolver my-spec.yaml
+
+In questo repository, per chiarezza, i file di specifica che utilizzano
+yaml anchors e $ref hanno estensione `yaml.src`.
+
+Notate che questi file sono formalmente corretti e specifiche valide
+a tutti gli effetti. La creazione di un bundle viene effettuata solamente
+per una maggiore portabilità del risultato.
+
+### Generare il codice del server con swagger-codegen
+
+Degli esempi di generazione di codice (o creazione degli stub) tramite
+il programma `swagger-codegen-cli` sono presenti 
+nei Makefile degli starter kit di Java e Python.
+
+- https://github.com/teamdigitale/api-starter-kit-java/blob/master/Makefile
+- https://github.com/teamdigitale/api-starter-kit-python/blob/master/Makefile
 
 Il generatore non sovrascrive i file contenuti in `.swagger-codegen-ignore`.
 
+### API nativamente OAS3 (senza stub)
+
+La libreria python `connexion` permette di implementare direttamente i metodi
+associati agli endpoint senza necessariamente passare dalla generazione di codice.
 
   - un esempio completo di API native in OAS3 che si autenticano con uno SPID IDP 
     di test.  Per fare il build dei container con l'IDP e l'API lanciare:
@@ -60,21 +87,6 @@ Il generatore non sovrascrive i file contenuti in `.swagger-codegen-ignore`.
     Se l'API non trova l'IDP, basta ricrearlo con:
 
         docker-compose up -d idp 
-
-## Python
-
-### Usare HTTPS
-Per erogare un servizio python via https basta sostituire
-
-        # in Dockerfile
-        FROM python:3.6-alpine
-        +RUN apk add --no-cache libffi-dev build-base openssl-dev
-        -EXPOSE 8080
-        +EXPOSE 8443
-
-        # in swagger_server/__main__.py
-        -app.run(port=8080)
-        +app.run(port=8443, ssl_context='adhoc')
 
 
 
