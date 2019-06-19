@@ -1,9 +1,11 @@
 # Starter kit per la pubblicazione su API interoperabili
 
 [![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit)
+[![Join the #api channel](https://img.shields.io/badge/Slack-%23api-blue.svg?logo=slack)](https://developersitalia.slack.com/messages/CDKBYTG74)
+[![Get invited](https://slack.developers.italia.it/badge.svg)](https://slack.developers.italia.it/)
+[![API on forum.italia.it](https://img.shields.io/badge/Forum-interoperabilità-blue.svg)](https://forum.italia.it/c/interoperabilita)
 
-
-Questo repository contiene il template di un progetto utile a pubblicare delle API interoperabili.
+Questo repository contiene una guida per la scrittura di API interoperabili.
 
 Progetti associati:
 
@@ -20,11 +22,14 @@ Progetti associati:
 
 Gli step per la creazione di API interoperabili sono:
 
-.1 scrivere le specifiche in formato OpenAPI v3 partendo dagli esempi in `openapi`;
+1. scrivere le specifiche in formato OpenAPI v3 partendo dagli esempi in `openapi`;
 
-.2 scrivere o generare il codice a partire dalle specifiche. Alcuni strumenti per auto-generare il codice utilizzano ancora il formato swagger (openapi v2). Nella directory `scripts` ci sono dei tool di conversione basati su docker.
+2. scrivere o generare il codice a partire dalle specifiche. Gli esempi per python e java che trovate nei progetti
+   associati funzionano nativamente in formato OAS3 usando swagger-codegen-cli. 
+   Linguaggi meno diffusi o altri tool possono essere legati ancora a swagger (openapi v2).
+   Nella directory `scripts` ci sono dei tool di conversione basati su docker.
 
-.3 scrivere i metodi dell'applicazione
+3. scrivere i metodi dell'applicazione
 
 ### Scrivere le specifiche
 
@@ -61,8 +66,8 @@ per una maggiore portabilità del risultato.
 ### Generare il codice del server con swagger-codegen
 
 Degli esempi di generazione di codice (o creazione degli stub) tramite
-il programma `swagger-codegen-cli` sono presenti 
-nei Makefile degli starter kit di Java e Python.
+[swagger-codegen](https://github.com/swagger-api/swagger-codegen) e
+`swagger-codegen-cli` sono presenti nei Makefile degli starter kit di Java e Python.
 
 - https://github.com/teamdigitale/api-starter-kit-java/blob/master/Makefile
 - https://github.com/teamdigitale/api-starter-kit-python/blob/master/Makefile
@@ -71,7 +76,8 @@ Il generatore non sovrascrive i file contenuti in `.swagger-codegen-ignore`.
 
 ### API nativamente OAS3 (senza stub)
 
-La libreria python `connexion` permette di implementare direttamente i metodi
+La libreria python [Connexion](https://github.com/zalando/connexion) basata su Flask e aiohttp
+permette *anche* di implementare direttamente i metodi
 associati agli endpoint senza necessariamente passare dalla generazione di codice.
 
   - un esempio completo di API native in OAS3 che si autenticano con uno SPID IDP 
@@ -87,14 +93,6 @@ associati agli endpoint senza necessariamente passare dalla generazione di codic
     Se l'API non trova l'IDP, basta ricrearlo con:
 
         docker-compose up -d idp 
-
-
-
-## swagger_server/__main__.py
-Un servizio REST con supporto TLS. 
-
-Il server viene generato tramite [swagger-codegen](https://github.com/swagger-api/swagger-codegen).
-Questo esempio utilizza la libreria [Connexion](https://github.com/zalando/connexion) library on top of Flask.
 
 ## Requisiti
 Docker e Python 3.6+
