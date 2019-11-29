@@ -11,6 +11,7 @@ Progetti associati:
 
 - [API Starter Kit per Java](https://github.com/teamdigitale/api-starter-kit-java) [![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit-java.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit-java)
 - [API Starter Kit per Python](https://github.com/teamdigitale/api-starter-kit-python) [![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit-python.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit-python)
+- [API Starter Kit per Go *sperimentale*](https://github.com/teamdigitale/api-starter-kit-go) [![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit-go.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit-go)
 - [Schemi riusabili per specifiche OAS3](https://raw.githubusercontent.com/teamdigitale/openapi) [![CircleCI](https://circleci.com/gh/teamdigitale/openapi.svg?style=svg)](https://circleci.com/gh/teamdigitale/openapi)
 
 ## Contenuto
