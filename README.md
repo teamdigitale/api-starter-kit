@@ -13,7 +13,7 @@ Progetti associati:
 - [API Starter Kit per Python](https://github.com/teamdigitale/api-starter-kit-python) [![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit-python.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit-python)
 - [API Starter Kit per Go *sperimentale*](https://github.com/teamdigitale/api-starter-kit-go) [![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit-go.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit-go)
 - [Schemi riusabili per specifiche OAS3](https://teamdigitale.github.io/openapi/) [![CircleCI](https://circleci.com/gh/teamdigitale/openapi.svg?style=svg)](https://circleci.com/gh/teamdigitale/openapi)
-- [Validatore per specifiche OAS3](https://github.com/teamdigitale/api-oas-checker)
+- [Validatore per specifiche OAS3](https://github.com/teamdigitale/api-oas-checker)  [![CircleCI](https://circleci.com/gh/teamdigitale/api-oas-checker.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-oas-checker)
 
 ## Contenuto
 
