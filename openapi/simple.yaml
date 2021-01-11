@@ -149,21 +149,29 @@ components:
         See https://tools.ietf.org/html/rfc7231#section-7.1.3
       schema:
         format: int32
+        maximum: 186400
+        minimum: 0
         type: integer
     X-RateLimit-Limit:
       description: The number of allowed requests in the current period
       schema:
         format: int32
+        maximum: 1000000
+        minimum: 0
         type: integer
     X-RateLimit-Remaining:
       description: The number of remaining requests in the current period
       schema:
         format: int32
+        maximum: 1000000
+        minimum: 0
         type: integer
     X-RateLimit-Reset:
       description: The number of seconds left in the current period
       schema:
         format: int32
+        maximum: 186400
+        minimum: 0
         type: integer
   responses:
     400BadRequest:
@@ -210,19 +218,34 @@ components:
       description: Unexpected error
   schemas:
     Problem:
+      additionalProperties: false
+      description: |-
+        This schema describes RFC7807 Problem Details for HTTP APIs.
+        The specification is intentionally flexible, and allows to adapt
+        the schema adding further properties, or not enforcing any of the properties
+        below.
+
+        To make this schema safe by default, additionalProperties are forbidden though.
+        In case you need them, you can either re-define Problem or extend it
+        using `allOf`.
       properties:
         detail:
           description: |
             A human readable explanation specific to this occurrence of the
             problem. You MUST NOT expose internal informations, personal
             data or implementation details through this field.
+
+            `detail` supports localized patterns whereas `title` pattern is only in ascii.
           example: Request took too long to complete.
+          maxLength: 4096
+          pattern: ^.{0,1024}$
           type: string
         instance:
           description: |
             An absolute URI that identifies the specific occurrence of the problem.
             It may or may not yield further information if dereferenced.
           format: uri
+          maxLength: 2048
           type: string
         status:
           description: |
@@ -238,7 +261,10 @@ components:
           description: |
             A short, summary of the problem type. Written in english and readable
             for engineers (usually not suited for non technical stakeholders and
-            not localized); example: Service Unavailable
+            not localized): the expressed pattern does not support unicode characters.
+          example: Service Unavailable
+          maxLength: 64
+          pattern: ^[ -~]{0,64}$
           type: string
         type:
           default: about:blank
@@ -248,6 +274,7 @@ components:
             (e.g., using HTML).
           example: https://tools.ietf.org/html/rfc7231#section-6.6.4
           format: uri
+          maxLength: 2048
           type: string
       type: object
     Timestamps:
