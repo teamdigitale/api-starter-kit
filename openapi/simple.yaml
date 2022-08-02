@@ -80,7 +80,7 @@ paths:
       description: |
         Ritorna un timestamp in formato RFC5424
         prendendola dal server attuale.
-      operationId: get_echo
+      operationId: show_echo
       responses:
         '200':
           content:
@@ -113,7 +113,7 @@ paths:
         Ritorna lo stato dell'applicazione. A scopo
         di test, su base randomica puo' ritornare
         un errore.
-      operationId: get_status
+      operationId: show_status
       responses:
         '200':
           content:
