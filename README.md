@@ -15,6 +15,15 @@ Progetti associati:
 - [Schemi riusabili per specifiche OAS3](https://teamdigitale.github.io/openapi/) [![CircleCI](https://circleci.com/gh/teamdigitale/openapi.svg?style=svg)](https://circleci.com/gh/teamdigitale/openapi)
 - [Validatore per specifiche OAS3](https://github.com/italia/api-oas-checker)
 
+
+Materiale, slide, e webinar:
+
+- [slide1](https://docs.google.com/presentation/d/18H7WuA1EsU-haFyxNDO7O83Dno4jphEtU3S_diVmK5I/edit)
+- [slide2](https://docs.google.com/presentation/d/1CZBvOEc5NEtOBA-UkerLvz1ADb_ip8y5don9NH-Tfjw/edit)
+- [Videointervista e demo di API OAS Checker (en)](https://www.youtube.com/watch?v=1BK4yGt64H4&ab_channel=ErikWilde)
+- [Community lab su API design e API canvas](https://docs.google.com/presentation/d/1-WC1Tfpg-T5-Q1PxcjR0Diixjm0kvRnyXSTuJ7jjs6U/edit#slide=id.ge113e98e1b_0_0)
+- [Articolo medium](https://medium.com/developers-italia/openapi-checker-il-verificatore-delle-interfacce-digitali-api-1d50b978c8c5)
+
 ## Contenuto
 
 - Un progetto di esempio in python
