@@ -28,6 +28,7 @@ Materiale, slide, e webinar:
 API e semantica:
 
 - Self-explaining APIs, 2022 (en) [slide](https://docs.google.com/presentation/d/16-u3nN0NuXQRJIxbhpPpHweijEC7eQ3fUaXftIZEGFg/edit)
+- Catalogo nazionale dati per l'interoperabilità semantica: https://schema.gov.it
 
 API e standards:
 
