@@ -18,13 +18,25 @@ Progetti associati:
 
 Materiale, slide, e webinar:
 
-- [slide1](https://docs.google.com/presentation/d/18H7WuA1EsU-haFyxNDO7O83Dno4jphEtU3S_diVmK5I/edit)
-- [slide2](https://docs.google.com/presentation/d/1CZBvOEc5NEtOBA-UkerLvz1ADb_ip8y5don9NH-Tfjw/edit)
-- [Videointervista e demo di API OAS Checker (en)](https://www.youtube.com/watch?v=1BK4yGt64H4&ab_channel=ErikWilde)
-- [Community lab su API design e API canvas](https://docs.google.com/presentation/d/1-WC1Tfpg-T5-Q1PxcjR0Diixjm0kvRnyXSTuJ7jjs6U/edit#slide=id.ge113e98e1b_0_0)
+- Using OpenAPI to standardize the Italian API ecosystem [slide](https://docs.google.com/presentation/d/1blql0E_zcbq7r-wzmslgJPiW7ELkYlIn9_fqIVEXr4A/edit#slide=id.p4) [(en, video)](https://www.youtube.com/watch?v=AL5itw_r9iI)
+- Design secure APIs (en) [slide](https://docs.google.com/presentation/d/18H7WuA1EsU-haFyxNDO7O83Dno4jphEtU3S_diVmK5I/edit)
+- Design secure APIs (en, short) [slide](https://docs.google.com/presentation/d/1CZBvOEc5NEtOBA-UkerLvz1ADb_ip8y5don9NH-Tfjw/edit)
+- Videointervista e demo di API OAS Checker (en) [video](https://www.youtube.com/watch?v=1BK4yGt64H4&ab_channel=ErikWilde)
+- Community lab su API design e API canvas [slide](https://docs.google.com/presentation/d/1-WC1Tfpg-T5-Q1PxcjR0Diixjm0kvRnyXSTuJ7jjs6U/edit#slide=id.ge113e98e1b_0_0) [video](https://www.youtube.com/watch?v=D-3t8h1E9yE) 
 - [Articolo medium](https://medium.com/developers-italia/openapi-checker-il-verificatore-delle-interfacce-digitali-api-1d50b978c8c5)
 
+API e semantica:
+
+- Self-explaining APIs, 2022 (en) [slide](https://docs.google.com/presentation/d/16-u3nN0NuXQRJIxbhpPpHweijEC7eQ3fUaXftIZEGFg/edit)
+
+API e standards:
+
+- Extending HTTP for fun and non-profit (en) [slide](https://docs.google.com/presentation/d/1L_1D9gABQbLrf_zi6x8lWoMOdruzM2vBLkFpmcUoiLM/edit#slide=id.p)
+- Interoperability rules for an European API Ecosystem (en)[slide](https://docs.google.com/presentation/d/1L6R4ZKhLoZAPEmai1KSED1nrq0GNrx3-TU53sGhfrO8/edit#slide=id.p4)
+
+
 ## Contenuto
+
 
 - Un progetto di esempio in python
 - Una directory `openapi` dove scrivere le specifiche, che include script e suggerimenti
