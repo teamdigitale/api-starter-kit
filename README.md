@@ -12,6 +12,8 @@ Progetti associati:
 - [API Starter Kit per Java](https://github.com/teamdigitale/api-starter-kit-java) [![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit-java.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit-java)
 - [API Starter Kit per Python](https://github.com/teamdigitale/api-starter-kit-python) [![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit-python.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit-python)
 - [API Starter Kit per Go *sperimentale*](https://github.com/teamdigitale/api-starter-kit-go) [![CircleCI](https://circleci.com/gh/teamdigitale/api-starter-kit-go.svg?style=svg)](https://circleci.com/gh/teamdigitale/api-starter-kit-go)
+- [API Starter Kit per C#- ASP.NET *sperimentale*](https://github.com/teamdigitale/api-starter-kit-aspnetcore) [![.NET](https://github.com/fderrigo/api-starter-kit-aspnetcore/actions/workflows/dotnet.yml/badge.svg)](https://github.com/fderrigo/api-starter-kit-aspnetcore/actions/workflows/dotnet.yml)
+
 - [Schemi riusabili per specifiche OAS3](https://teamdigitale.github.io/openapi/) [![CircleCI](https://circleci.com/gh/teamdigitale/openapi.svg?style=svg)](https://circleci.com/gh/teamdigitale/openapi)
 - [Validatore per specifiche OAS3](https://github.com/italia/api-oas-checker)
 
